@@ -1,11 +1,28 @@
 <?php
 
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 
 class ContactPoint extends Element{
 
     public function __construct(){
         parent::__construct();
+    }
+    public function loadData($json){        
+        if(isset($json->system))
+            $this->system = $json->system;
+        if(isset($json->value))
+            $this->value = $json->value;
+        if(isset($json->use))
+            $this->use = $json->use;
+        if(isset($json->rank))
+            $this->rank = $json->rank;
+        if(isset($json->period))
+            $this->period = $json->period;
+    }
+    public static function Load($json){
+        $contactPoint = new ContactPoint();
+        $contactPoint->loadData($json);
+        return $contactPoint;
     }
     public function setSystem($system){
         $systems = ["phone","fax","email","pager","url","sms","other"];

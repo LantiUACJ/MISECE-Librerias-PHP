@@ -1,5 +1,5 @@
 <?php
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 class Extension extends Element{
     public function __construct(){
         parent::__construct();

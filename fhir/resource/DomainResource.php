@@ -1,16 +1,26 @@
 <?php
 
-namespace Modulo\Resource;
+namespace App\Fhir\Resource;
 
-use Modulo\Element\Extension;
+use App\Fhir\Element\Extension;
 
 class DomainResource extends Resource{
-    public function __construct(){
-        parent::__construct();
+    public function __construct($json = null){
+        parent::__construct($json);
         $this->extension = [];
         $this->contained = [];
+        if($json) $this->loadData($json);
     }
-
+    private function loadData($json){
+        if(isset($json->text)) $this->setText($json->text);
+        if(isset($json->contained))
+            foreach($json->contained as $contained)
+                $this->addContained(ResourceBuilder::make($contained));
+        if(isset($json->modifierExtension)) $this->setModifierExtension(new Extension($json->modifierExtension));
+        if(isset($json->extension))
+            foreach($json->extension as $extension)
+                $this->addExtension(new Extension($extension));
+    }
     public function setText($text){
         $this->text = $text;
     }
@@ -31,7 +41,6 @@ class DomainResource extends Resource{
             $dataArray["extension"][] = $extension->toArray();
         foreach($this->contained as $contained)
             $dataArray["contained"][] = $contained->toArray();
-        $dataArray["resourceType"] = $this->resourceType;
         return $dataArray;
     }
 }

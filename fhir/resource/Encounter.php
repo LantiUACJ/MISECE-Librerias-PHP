@@ -1,20 +1,20 @@
 <?php
 
-namespace Modulo\Resource;
+namespace App\Fhir\Resource;
 
-use Modulo\Element\Identifier;
-use Modulo\Element\Period;
-use Modulo\Element\Coding;
-use Modulo\Element\CodeableConcept;
-use Modulo\Element\Quantity;
-
-use Modulo\Exception\TextNotDefinedException;
+use App\Fhir\Element\Identifier;
+use App\Fhir\Element\Period;
+use App\Fhir\Element\Coding;
+use App\Fhir\Element\CodeableConcept;
+use App\Fhir\Element\Quantity;
+use App\Fhir\Element\Reference;
+use App\Fhir\Exception\TextNotDefinedException;
 
 class Encounter extends DomainResource{
 
-    public function __construct(){
+    public function __construct($json = null){
         $this->resourceType = "Encounter";
-        parent::__construct();
+        parent::__construct($json);
         $this->identifier = [];
         $this->classHistory = [];
         $this->type = [];
@@ -26,8 +26,174 @@ class Encounter extends DomainResource{
         $this->reasonCode = [];
         $this->diagnosis = [];
         $this->account = [];
+        $this->reasonReference = [];
+        if($json) $this->loadData($json);
     }
-    public function setIdentifier(Identifier $identifier){
+    private function loadData($json){
+        if(isset($json->identifier)){
+            foreach($json->identifier as $identifier){
+                $this->addIdentifier(Identifier::Load($identifier));
+            }
+        }
+        if(isset($json->status)){
+            $this->status = $json->status;
+        }
+        if(isset($json->statusHistory)){
+            foreach($json->statusHistory as $statusHistory){
+                $history = [];
+                if(isset($statusHistory->status)){
+                    $history["status"] = $statusHistory->status;
+                }
+                if(isset($statusHistory->period)){
+                    $history["period"] = Period::Load($statusHistory->period);
+                }
+                $this->statusHistory[] = $history;
+            }
+        }
+        if(isset($json->classHistory)){
+            foreach($json->classHistory as $classHistory){
+                $history = [];
+                if(isset($classHistory->status)){
+                    $history["coding"] = Coding::Load($classHistory->status);
+                }
+                if(isset($classHistory->period)){
+                    $history["period"] = Period::Load($classHistory->period);
+                }
+                $this->classHistory[] = $history;
+            }
+        }
+        if(isset($json->class)){
+            $this->setClass(Coding::Load($json->class));
+        }
+        if(isset($json->type)){
+            foreach($json->type as $type){
+                $this->addType(CodeableConcept::Load($type));
+            }
+        }
+        if(isset($json->serviceType)){
+            $this->setServiceType(CodeableConcept::Load($json->serviceType));
+        }
+        if(isset($json->priority)){
+            $this->setPriority(CodeableConcept::Load($json->priority));
+        }
+        if(isset($json->subject)){
+            $this->subject = Reference::Load($json->subject);
+        }
+        if(isset($json->episodeOfCare)){
+            foreach($json->episodeOfCare as $episodeOfCare){
+                $this->episodeOfCare[] = Reference::Load($episodeOfCare);
+            }
+        }
+        if(isset($json->basedOn)){
+            foreach($json->basedOn as $basedOn){
+                $this->basedOn[] = Reference::Load($basedOn);
+            }
+        }
+        if(isset($json->participant)){
+            foreach ($json->participant as $participant) {
+                $participants = [];
+                if(isset($participant->type)){
+                    $types = [];
+                    foreach($participant->type as $type)
+                        $types[] = CodeableConcept::Load($type);
+                    $participants["types"] = $types;
+                }
+                if(isset($participant->period))
+                    $participants["period"] = $participant->period;
+                if(isset($participant->individual))
+                    $participants["individual"] = $participant->individual;
+                $this->participant[] = $participants;
+            }
+        }
+        if(isset($json->appointment)){
+            foreach($json->appointment as $appointment){
+                $this->appointment[] = Reference::Load($appointment);
+            }
+        }
+        if(isset($json->period)){
+            $this->setPeriod(Period::Load($json->period));
+        }
+        if(isset($json->length)){
+            $this->setLength(Quantity::Load($json->length));
+        }
+        if(isset($json->reasonCode)){
+            foreach($json->reasonCode as $reasonCode){
+                $this->reasonCode[] = Reference::Load($reasonCode);
+            }
+        }
+        if(isset($json->reasonReference)){
+            foreach($json->reasonReference as $reasonReference){
+                $this->reasonReference[] = Reference::Load($reasonReference);
+            }
+        }
+        if(isset($json->diagnosis)){
+            foreach($json->diagnosis as $diagnosis){
+                $diagnosises = [];
+                if(isset($diagnosis->condition)) $diagnosises["condition"] = Reference::Load($diagnosis->condition);
+                if(isset($diagnosis->use)) $diagnosises["use"] = CodeableConcept::Load($diagnosis->use);
+                if(isset($diagnosis->rank)) $diagnosises["rank"] = $diagnosis->rank;
+                $this->diagnosis[] = $diagnosises;
+            }
+        }
+        if(isset($json->account)){
+            foreach($json->account as $account){
+                $this->account[] = Reference::Load($account);
+            }
+        }
+        if(isset($json->hospitalization)){
+            if(isset($json->hospitalization->preAdmissionIdentifier)){
+                $this->hospitalization["preAdmissionIdentifier"] = Identifier::Load($json->hospitalization->preAdmissionIdentifier);
+            }
+            if(isset($json->hospitalization->origin)){
+                $this->hospitalization["origin"] = Reference::Load($json->hospitalization->origin);
+            }
+            if(isset($json->hospitalization->admitSource)){
+                $this->hospitalization["admitSource"] = CodeableConcept::Load($json->hospitalization->admitSource);
+            }
+            if(isset($json->hospitalization->reAdmission)){
+                $this->hospitalization["reAdmission"] = CodeableConcept::Load($json->hospitalization->reAdmission);
+            }
+            if(isset($json->hospitalization->dietPreference)){
+                foreach($json->hospitalization->dietPreference as $dietPreference)
+                    $this->hospitalization["dietPreference"] = CodeableConcept::Load($dietPreference);
+            }
+            if(isset($json->hospitalization->specialCourtesy)){
+                foreach($json->hospitalization->specialCourtesy as $specialCourtesy)
+                    $this->hospitalization["specialCourtesy"] = CodeableConcept::Load($specialCourtesy);
+            }
+            if(isset($json->hospitalization->specialArrangement)){
+                foreach($json->hospitalization->specialArrangement as $specialArrangement)
+                    $this->hospitalization["specialArrangement"] = CodeableConcept::Load($specialArrangement);
+            }
+            if(isset($json->hospitalization->destination)){
+                $this->hospitalization["destination"] = Reference::Load($json->hospitalization->destination);
+            }
+            if(isset($json->hospitalization->dischargeDisposition)){
+                $this->hospitalization["dischargeDisposition"] = CodeableConcept::Load($json->hospitalization->dischargeDisposition);
+            }
+        }
+        if(isset($json->location)){
+            foreach($json->location as $location){
+                $locations = [];
+                if(isset($location->location))
+                    $locations["location"] = Reference::Load($location->location);
+                if(isset($location->status))
+                    $locations["status"] = $location->status;
+                if(isset($location->physicalType))
+                    $locations["physicalType"] = CodeableConcept::Load($location->physicalType);
+                if(isset($location->period))
+                    $locations["period"] = Period::Load($location->period);
+                $this->location[] = $locations;
+            }
+        }
+        if(isset($json->serviceProvider)){
+            $this->serviceProvider = Reference::Load($json->serviceProvider);
+        }
+        if(isset($json->partOf)){
+            $this->partOf = Reference::Load($json->partOf);
+        }
+    }
+    public function addIdentifier(Identifier $identifier){
         $this->identifier[] = $identifier;
     }
     public function setStatus($status){
@@ -43,17 +209,7 @@ class Encounter extends DomainResource{
         }
     }
     public function addStatusHistory($status, Period $period){
-        $status_acepted = null;
-        $only = ["planned", "arrived", "triaged", "in-progress", "onleave", "finished", "cancelled"];
-        foreach($only as $word){
-            if($word == strtolower($status)){
-                $status_acepted = $status;
-            }
-        }
-        if(!$status_acepted){
-			throw new TextNotDefinedException("Status", implode(", ",$only));
-        }
-        
+        $status_acepted = $this->only(["planned", "arrived", "triaged", "in-progress", "onleave", "finished", "cancelled"], $status);
         $statusHistory = [
             "status"=>$status_acepted,
             "period"=>$period
@@ -161,8 +317,7 @@ class Encounter extends DomainResource{
     public function addLocation(Resource $location, $status, CodeableConcept $physicalType, Period $period){
         $data = [];
         $data["location"] = $location->toReference();
-        $statuses = ["planned", "active", "reserved", "completed"];
-        $data["status"] = $status;
+        $data["status"] = $this->only(["planned", "active", "reserved", "completed"], $status);
         $data["physicalType"] = $physicalType;
         $data["period"] = $period;
         $this->location[] = $data;
@@ -173,10 +328,8 @@ class Encounter extends DomainResource{
     public function setPartOf(Resource $partOf){
         $this->partOf = $partOf->toReference();
     }
-
     public function toArray(){
         $arrayData = parent::toArray();
-
         foreach($this->identifier as $identifier){
             $arrayData["identifier"][] = $identifier->toArray();
         }
@@ -190,10 +343,14 @@ class Encounter extends DomainResource{
             ];
         }
         foreach($this->classHistory as $classHistory){
-            $arrayData["classHistory"][] = [
-                "coding"=>$classHistory["coding"]->toArray(),
-                "period"=>$classHistory["period"]->toArray(),
-            ];
+            $data = [];
+            if(isset($classHistory["coding"])){
+                $data["coding"] = $classHistory["coding"]->toArray();
+            }
+            if(isset($classHistory["period"])){
+                $data["period"] = $classHistory["period"]->toArray();
+            }
+            $arrayData["classHistory"][] = $data;
         }
         if(isset($this->class)){
             $arrayData["class"] = $this->class->toArray();
@@ -217,15 +374,18 @@ class Encounter extends DomainResource{
             $arrayData["basedOn"][] = $basedOn->toArray();
         }
         foreach ($this->participant as $participant) {
-            $types = [];
-            foreach($participant["type"] as $type)
-                $types[] = $type->toArray();
-
-            $arrayData["participant"][] = [
-                "type" => $types,
-                "period"=>$participant["period"]->toArray(),
-                "individual"=>$participant["individual"]
-            ];
+            $data = [];
+            if(isset($participant["type"])){
+                $types = [];
+                foreach($participant["type"] as $type)
+                    $types[] = $type->toArray();
+                $data["type"] = $types;
+            }
+            if(isset($participant["participant"]))
+                $data["participant"] = $participant["participant"]->toArray();
+            if(isset($participant["individual"]))
+                $data["individual"] = $participant["individual"];
+            $arrayData["participant"][] = $data;
         }
         foreach($this->appointment as $appointment){
             $arrayData["appointment"] = $appointment->toArray();
@@ -243,11 +403,14 @@ class Encounter extends DomainResource{
             $arrayData["reasonReference"][] = $reasonReference->toArray();
         }
         foreach($this->diagnosis as $diagnosis){
-            $arrayData["diagnosis"][] = [
-                "condition"=>$diagnosis["condition"]->toArray(),
-                "use"=>$diagnosis["use"]->toArray(),
-                "rank"=>$diagnosis["rank"],
-            ];
+            $data = [];
+            if(isset($diagnosis["condition"]))
+                $data["condition"] = $diagnosis["condition"]->toArray();
+            if(isset($diagnosis["use"]))
+                $data["use"] = $diagnosis["use"]->toArray();
+            if(isset($diagnosis["rank"]))
+                $data["rank"] = $diagnosis["rank"];
+            $arrayData["diagnosis"][] = $data;
         }
         foreach($this->account as $account){
             $arrayData["account"] = $account->toArray();
@@ -282,13 +445,18 @@ class Encounter extends DomainResource{
             }
         }
         if(isset($this->location)){
-            foreach($this->location as $location)
-                $arrayData["location"][] = [
-                    "location"=>$location["location"]->toArray(),
-                    "status"=>$location["status"],
-                    "physicalType"=>$location["physicalType"]->toArray(),
-                    "period"=>$location["period"]->toArray(),
-                ];
+            foreach($this->location as $location){
+                $data = [];
+                if(isset($location["location"]))
+                    $data["location"] = $location["location"]->toArray();
+                if(isset($location["status"]))
+                    $data["status"] = $location["status"];
+                if(isset($location["physicalType"]))
+                    $data["physicalType"] = $location["physicalType"]->toArray();
+                if(isset($location["period"]))
+                    $data["period"] = $location["period"]->toArray();
+                $arrayData["location"][] = $data;
+            }
         }
         if(isset($this->serviceProvider)){
             $arrayData["serviceProvider"] = $this->serviceProvider->toArray();

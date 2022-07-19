@@ -1,8 +1,8 @@
 <?php
 
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 
-use Modulo\Exception\TextNotDefinedException;
+use App\Fhir\Exception\TextNotDefinedException;
 
 class Address extends Element{
     public function __construct(){
@@ -10,6 +10,36 @@ class Address extends Element{
         $this->line = [];
     }
 
+    private function loadData($json){
+        if(isset($json->use))
+            $this->use = $json->use;
+        if(isset($json->code))
+            $this->code = $json->code;
+        if(isset($json->type))
+            $this->type = $json->type;
+        if(isset($json->text))
+            $this->text = $json->text;
+        if(isset($json->line))
+            foreach($json->line as $line)
+                $this->line[] = $line;
+        if(isset($json->city))
+            $this->city = $json->city;
+        if(isset($json->district))
+            $this->district = $json->district;
+        if(isset($json->state))
+            $this->state = $json->state;
+        if(isset($json->postalCode))
+            $this->postalCode = $json->postalCode;
+        if(isset($json->country))
+            $this->country = $json->country;
+        if(isset($json->period))
+            $this->period = Period::Load($json->period);
+    }
+    public static function Load($json){
+        $address = new Address();
+        $address->loadData($json);
+        return $address;
+    }
     public function setUse($use){
         $this->use = "";
         $uses = ["home", "work", "temp", "old", "billing"];
@@ -59,7 +89,6 @@ class Address extends Element{
     public function setPeriod(Period $period){
         $this->period = $period;
     }
-
     public function toArray(){
         $arrayData = parent::toArray();
 
@@ -71,8 +100,9 @@ class Address extends Element{
             $arrayData["type"] = $this->type;
         if(isset($this->text))
             $arrayData["text"] = $this->text;
-        foreach($this->line as $line)
-            $arrayData["line"][] = $line;
+        if(isset($this->line))
+            foreach($this->line as $line)
+                $arrayData["line"][] = $line;
         if(isset($this->city))
             $arrayData["city"] = $this->city;
         if(isset($this->district))

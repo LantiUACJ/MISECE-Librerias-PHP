@@ -1,17 +1,17 @@
 <?php 
 
-namespace Modulo\Resource;
+namespace App\Fhir\Resource;
 
-use Modulo\Element\CodeableConcept;
-use Modulo\Element\Identifier;
-use Modulo\Element\Period;
-use Modulo\Element\Attachment;
+use App\Fhir\Element\CodeableConcept;
+use App\Fhir\Element\Identifier;
+use App\Fhir\Element\Period;
+use App\Fhir\Element\Attachment;
+use App\Fhir\Element\Reference;
 
 class DiagnosticReport extends DomainResource{
-    
-    public function __construct(){
+    public function __construct($json = null){
         $this->resourceType = "DiagnosticReport";
-        parent::__construct();
+        parent::__construct($json);
         $this->identifier = [];
         $this->basedOn = [];
         $this->category = [];
@@ -23,6 +23,56 @@ class DiagnosticReport extends DomainResource{
         $this->conclusionCode = [];
         $this->presentedForm = [];
         $this->resultsInterpreter = [];
+        if($json) $this->loadData($json);
+    }
+    private function loadData($json){
+        if(isset($json->status)) $this->setStatus($json->status);
+        if(isset($json->code)) $this->setCode(CodeableConcept::Load($json->code));
+        if(isset($json->subject)) $this->subject = Reference::Load($json->subject);
+        if(isset($json->encounter)) $this->encounter = Reference::Load($json->encounter);
+        if(isset($json->effectiveDateTime)) $this->setEffectiveDateTime(CodeableConcept::Load($json->effectiveDateTime));
+        if(isset($json->effectivePeriod)) $this->setEffectivePeriod(Period::Load($json->effectivePeriod));
+        if(isset($json->issued)) $this->setIssued($json->issued);
+        if(isset($json->conclusion)) $this->setConclusion($json->conclusion);
+        if(isset($json->conclusionCode)) $this->addConclusionCode(CodeableConcept::Load($json->conclusionCode));
+        if(isset($json->identifier))
+            foreach($json->identifier as $identifier)
+                $this->addIdentifier(Identifier::Load($identifier));
+        if(isset($json->basedOn))
+            foreach($json->basedOn as $basedOn)
+                $this->basedOn[] = Reference::Load($basedOn);
+        if(isset($json->category))
+            foreach($json->category as $category)
+                $this->addCategory(CodeableConcept::Load($category));
+        if(isset($json->presentedForm))
+            foreach($json->presentedForm as $presentedForm)
+                $this->addPresentedForm(Attachment::Load($presentedForm));
+        if(isset($json->performer))
+            foreach($json->performer as $performer)
+                $this->performer[] = Reference::Load($performer);
+        if(isset($json->resultsInterpreter))
+            foreach($json->resultsInterpreter as $resultsInterpreter)
+                $this->resultsInterpreter[] = Reference::Load($resultsInterpreter);
+        if(isset($json->specimen))
+            foreach($json->specimen as $specimen)
+                $this->specimen[] = Reference::Load($specimen);
+        if(isset($json->result))
+            foreach($json->result as $result)
+                $this->result[] = Reference::Load($result);
+        if(isset($json->imagingStudy))
+            foreach($json->imagingStudy as $imagingStudy)
+                $this->imagingStudy[] = Reference::Load($imagingStudy);
+        if(isset($json->media))
+            foreach($json->media as $media){
+                $medias = [];
+                if(isset($media["media"])){
+                    $medias["media"] = $media["media"];
+                }
+                if(isset($media["link"])){
+                    $medias["link"] = Reference::Load($media["link"]);
+                }
+                $this->media[] = $medias;
+            }
     }
     public function addIdentifier(Identifier $identifier){
         $this->identifier[] = $identifier;
@@ -85,10 +135,8 @@ class DiagnosticReport extends DomainResource{
     public function addPresentedForm(Attachment $presentedForm){
         $this->presentedForm[] = $presentedForm;
     }
-    
     public function toArray(){
         $dataArray = parent::toArray();
-        $dataArray["resourceType"]=$this->resourceType;
         foreach($this->identifier as $identifier)
             $dataArray["identifier"][] = $identifier->toArray();
         foreach($this->basedOn as $basedOn)

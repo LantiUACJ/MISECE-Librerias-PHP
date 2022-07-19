@@ -1,12 +1,23 @@
 <?php 
 
-namespace Modulo\Resource;
+namespace App\Fhir\Resource;
+
+use App\Fhir\Element\Annotation;
+use App\Fhir\Element\CodeableConcept;
+use App\Fhir\Element\Identifier;
+use App\Fhir\Element\Period;
+use App\Fhir\Element\Quantity;
+use App\Fhir\Element\Range;
+use App\Fhir\Element\Ratio;
+use App\Fhir\Element\Reference;
+use App\Fhir\Element\SampleData;
+use App\Fhir\Element\Timing;
 
 class Observation extends DomainResource{
 
-    public function __construct(){
+    public function __construct($json = null){
         $this->resourceType = "Observation";
-        parent::__construct();
+        parent::__construct($json);
         $this->identifier = [];
         $this->basedOn = [];
         $this->partOf = [];
@@ -17,8 +28,150 @@ class Observation extends DomainResource{
         $this->note = [];
         $this->hasMember = [];
         $this->derivedFrom = [];
+        if($json) $this->loadData($json);
     }
-
+    private function loadData($json){
+        $arrayData = [];
+        if(isset($json->identifier))
+            foreach($json->identifier as $identifier)
+                $arrayData["identifier"][] = $identifier->toArray();
+        if(isset($json->status))
+            $arrayData["status"] = $json->status;
+        if(isset($json->issued))
+            $arrayData["issued"] = $json->issued;
+        if(isset($json->basedOn))
+            foreach($json->basedOn as $basedOn)
+                $arrayData['basedOn'][] = Reference::Load($basedOn);
+        if(isset($json->partOf))
+            foreach($json->partOf as $partOf)
+                $arrayData["partOf"][] = $partOf->toArray();
+        if(isset($json->partOf))
+            foreach($json->category as $category)
+                $arrayData["category"][] = $category->toArray();
+        if(isset($json->code))
+            $arrayData["code"] = CodeableConcept::Load($json->code);
+        if(isset($json->subject))
+            $arrayData["subject"] = Reference::Load($json->subject);
+        if(isset($json->focus))
+            foreach($json->focus as $focus)
+                $arrayData["focus"][] = Reference::Load($focus);
+        if(isset($json->encounter))
+            $arrayData["encounter"] = Reference::Load($json->encounter);
+        if(isset($json->effectiveDateTime))
+            $arrayData["effectiveDateTime"] = $json->effectiveDateTime;
+        if(isset($json->effectivePeriod))
+            $arrayData["effectivePeriod"] = $json->effectivePeriod->toArray();
+        if(isset($json->effectiveTiming))
+            $arrayData["effectiveTiming"] = $json->effectiveTiming->toArray();
+        if(isset($json->effectiveInstant))
+            $arrayData["effectiveInstant"] = $json->effectiveInstant;
+        if(isset($json->performer))
+            foreach($json->performer as $performer)
+                $arrayData["performer"][] = Reference::Load($performer);
+        if(isset($json->valueQuantity))
+            $arrayData["valueQuantity"] = Quantity::Load($json->valueQuantity);
+        if(isset($json->valueCodeableConcept))
+            $arrayData["valueCodeableConcept"] = CodeableConcept::Load($json->valueCodeableConcept);
+        if(isset($json->valueString))
+            $arrayData["valueString"] = $json->valueString;
+        if(isset($json->valueBoolean))
+            $arrayData["valueBoolean"] = $json->valueBoolean;
+        if(isset($json->valueInteger))
+            $arrayData["valueInteger"] = $json->valueInteger;
+        if(isset($json->valueRange))
+            $arrayData["valueRange"] = Range::Load($json->valueRange);
+        if(isset($json->valueRatio))
+            $arrayData["valueRatio"] = Ratio::Load($json->valueRatio);
+        if(isset($json->valueSampledData))
+            $json->valueSampledData = SampleData::Load($json->valueSampledData);
+        if(isset($json->valueTime))
+            $json->valueTime = $json->valueTime;
+        if(isset($json->valueDateTime))
+            $json->valueDateTime = $json->valueDateTime;
+        if(isset($json->valuePeriod))
+            $json->valuePeriod = Period::Load($json->valuePeriod);
+        if(isset($json->dataAbsentReason))
+            $json->dataAbsentReason = CodeableConcept::Load($json->dataAbsentReason);
+        if(isset($json->interpretation))
+            foreach($json->interpretation as $interpretation)
+                $json->interpretation = CodeableConcept::Load($interpretation);
+        if(isset($json->note))
+            foreach($json->note as $note)
+                $json->note = Annotation::Load($note);
+        if(isset($json->bodySite))
+            $json->bodySite = Reference::Load($json->bodySite);
+        if(isset($json->method))
+            $json->method = CodeableConcept::Load($json->method);
+        if(isset($json->specimen))
+            $json->specimen = $json->specimen;
+        if(isset($json->device))
+            $json->device = $json->device;
+        if(isset($json->referenceRange)){
+            $data = [];
+            if(isset($json->referenceRange->low))
+                $data["low"] = $json->referenceRange->low->toArray();
+            if(isset($json->referenceRange->high))
+                $data["high"] = $json->referenceRange->high->toArray();
+            if(isset($json->referenceRange->type))
+                $data["type"] = $json->referenceRange->type->toArray();
+            if(isset($json->referenceRange->appliesTo))
+                $data["appliesTo"] = $json->referenceRange->appliesTo->toArray();
+            if(isset($json->referenceRange->age))
+                $data["age"] = $json->referenceRange->age->toArray();
+            if(isset($json->referenceRange->text))
+                $data["text"] = $json->referenceRange->text;
+            $arrayData["referenceRange"][] = $data;
+        }
+        if(isset($json->hasMember))
+            foreach($json->hasMember as $hasMember)
+                $this->hasMember[] = Reference::Load($hasMember);
+        if(isset($json->derivedFrom))
+            foreach($json->derivedFrom as $derivedFrom)
+                $this->derivedFrom = $derivedFrom;
+        if(isset($json->component)){
+            $this->component = [];
+            if(isset($json->component->code))
+                $this->component["code"] = CodeableConcept::Load($json->component->code);
+            if(isset($json->component->valueQuantity))
+                $this->component["valueQuantity"] = Quantity::Load($json->component->valueQuantity);
+            if(isset($json->component->valueCodeableConcept))
+                $this->component["valueCodeableConcept"] = CodeableConcept::Load($json->component->valueCodeableConcept);
+            if(isset($json->component->valueString))
+                $this->component["valueString"] = $json->component->valueString;
+            if(isset($json->component->valueBoolean))
+                $this->component["valueBoolean"] = $json->component->valueBoolean;
+            if(isset($json->component->valueInteger))
+                $this->component["valueInteger"] = $json->component->valueInteger;
+            if(isset($json->component->valueRange))
+                $this->component["valueRange"] = Range::Load($json->component->valueRange);
+            if(isset($json->component->valueRatio))
+                $this->component["valueRatio"] = Ratio::Load($json->component->valueRatio);
+            if(isset($json->component->valueSampledData))
+                $this->component["valueSampledData"] = SampleData::Load($json->component->valueSampledData);
+            if(isset($json->component->valueTime))
+                $this->component["valueTime"] = $json->component->valueTime;
+            if(isset($json->component->valueDateTime))
+                $this->component["valueDateTime"] = $json->component->valueDateTime;
+            if(isset($json->component->period))
+                $this->component["period"] = Period::Load($json->component->period);
+            if(isset($json->component->dataAbsentReason))
+                $this->component["dataAbsentReason"] = CodeableConcept::Load($json->component->dataAbsentReason);
+            if(isset($json->component->interpretation)){
+                $inters = [];
+                foreach($json->component->interpretation as $inter){
+                    $inters[] = CodeableConcept::Load($inter);
+                }
+                $this->component["interpretation"] = $inters;
+            }
+            if(isset($json->component->referenceRange)){
+                $range = [];
+                foreach($json->component->referenceRange as $referenceRange){
+                    $range[] = CodeableConcept::Load($referenceRange);
+                }
+                $this->component["referenceRange"] = $range;
+            }
+        }
+    }
     public function addIdentifier(Identifier $identifier){
         $this->identifier[] = $identifier;
     }
@@ -134,8 +287,8 @@ class Observation extends DomainResource{
         $this->derivedFrom[] = $derivedFrom;
     }
     public function setComponent(CodeableConcept $code, Quantity $valueQuantity, CodeableConcept $valueCodeableConcept, $valueString, 
-        $valueInteger, Range $valueRange, Ratio $valueRatio, SampleData $valueSampledData, $valueTime, $valueDateTime,
-        Reriod $period, CodeableConcept $dataAbsentReason, $interpretation, $referenceRange){
+        $valueBoolean, $valueInteger, Range $valueRange, Ratio $valueRatio, SampleData $valueSampledData, $valueTime, $valueDateTime,
+        Period $period, CodeableConcept $dataAbsentReason, $interpretation, $referenceRange){
         $this->component->code = $code;
         $this->component->valueQuantity = $valueQuantity;
         $this->component->valueCodeableConcept = $valueCodeableConcept;
@@ -233,13 +386,13 @@ class Observation extends DomainResource{
             $arrayData["valueRatio"] = $this->valueRatio->toArray();
         }
         if(isset($this->valueSampledData)){
-            $this->valueSampledData = $valueSampledData->toArray();
+            $arrayData["valueSampledData"] = $this->valueSampledData->toArray();
         }
         if(isset($this->valueTime)){
-            $this->valueTime = $valueTime;
+            $arrayData["valueTime"] = $this->valueTime;
         }
         if(isset($this->valueDateTime)){
-            $this->valueDateTime = $valueDateTime;
+            $arrayData["valueDateTime"] = $this->valueDateTime;
         }
         if(isset($this->valuePeriod)){
             $arrayData["valuePeriod"] = $this->valuePeriod->toArray();
@@ -274,31 +427,50 @@ class Observation extends DomainResource{
             $arrayData["referenceRange"]["text"] = $this->referenceRange["text"];
         }
         foreach($this->hasMember as $hasMember){
-            $arrayData["hasMember"] = $this->hasMember->toArray();
+            $arrayData["hasMember"] = $hasMember->toArray();
         }
         foreach($this->derivedFrom as $derivedFrom){
-            $arrayData["derivedFrom"] = $this->derivedFrom;
+            $arrayData["derivedFrom"] = $derivedFrom;
         }
         if(isset($this->component)){
-            $arrayData["component"]["code"] = $this->component["code"]->toArray();
-            $arrayData["component"]["valueQuantity"] = $this->component["valueQuantity"]->toArray();
-            $arrayData["component"]["valueCodeableConcept"] = $this->component["valueCodeableConcept"]->toArray();
-            $arrayData["component"]["valueString"] = $this->component["valueString"];
-            $arrayData["component"]["valueBoolean"] = $this->component["valueBoolean"];
-            $arrayData["component"]["valueInteger"] = $this->component["valueInteger"];
-            $arrayData["component"]["valueRange"] = $this->component["valueRange"]->toArray();
-            $arrayData["component"]["valueRatio"] = $this->component["valueRatio"]->toArray();
-            $arrayData["component"]["valueSampledData"] = $this->component["valueSampledData"]->toArray();
-            $arrayData["component"]["valueTime"] = $this->component["valueTime"];
-            $arrayData["component"]["valueDateTime"] = $this->component["valueDateTime"];
-            $arrayData["component"]["period"] = $this->component["period"]->toArray();
-            $arrayData["component"]["dataAbsentReason"] = $this->component["dataAbsentReason"]->toArray();
-            $inters = [];
-            foreach($this->component->interpretation as $inter){
-                $arrayData["componet"]["interpretation"][] = $inter->toArray();
+            $arrayData["component"] = [];
+            if(isset($this->component["code"]))
+                $arrayData["component"]["code"] = $this->component["code"]->toArray();
+            if(isset($this->component["valueQuantity"]))
+                $arrayData["component"]["valueQuantity"] = $this->component["valueQuantity"]->toArray();
+            if(isset($this->component["valueCodeableConcept"]))
+                $arrayData["component"]["valueCodeableConcept"] = $this->component["valueCodeableConcept"]->toArray();
+            if(isset($this->component["valueString"]))
+                $arrayData["component"]["valueString"] = $this->component["valueString"];
+            if(isset($this->component["valueBoolean"]))
+                $arrayData["component"]["valueBoolean"] = $this->component["valueBoolean"];
+            if(isset($this->component["valueInteger"]))
+                $arrayData["component"]["valueInteger"] = $this->component["valueInteger"];
+            if(isset($this->component["valueRange"]))
+                $arrayData["component"]["valueRange"] = $this->component["valueRange"]->toArray();
+            if(isset($this->component["valueRatio"]))
+                $arrayData["component"]["valueRatio"] = $this->component["valueRatio"]->toArray();
+            if(isset($this->component["valueSampledData"]))
+                $arrayData["component"]["valueSampledData"] = $this->component["valueSampledData"]->toArray();
+            if(isset($this->component["valueTime"]))
+                $arrayData["component"]["valueTime"] = $this->component["valueTime"];
+            if(isset($this->component["valueDateTime"]))
+                $arrayData["component"]["valueDateTime"] = $this->component["valueDateTime"];
+            if(isset($this->component["period"]))
+                $arrayData["component"]["period"] = $this->component["period"]->toArray();
+            if(isset($this->component["dataAbsentReason"]))
+                $arrayData["component"]["dataAbsentReason"] = $this->component["dataAbsentReason"]->toArray();
+            if(isset($this->component["interpretation"])){
+                $arrayData["componet"]["interpretation"] = [];
+                foreach($this->component->interpretation as $inter){
+                    $arrayData["componet"]["interpretation"][] = $inter->toArray();
+                }
             }
-            foreach($this->component->referenceRange as $referenceRange){
-                $arrayData["componet"]["referenceRange"][] = $referenceRange->toArray();
+            if(isset($this->component["referenceRange"])){
+                $arrayData["componet"]["referenceRange"] = [];
+                foreach($this->component->referenceRange as $referenceRange){
+                    $arrayData["componet"]["referenceRange"][] = $referenceRange->toArray();
+                }
             }
         }
         return $arrayData;

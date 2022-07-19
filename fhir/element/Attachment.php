@@ -1,6 +1,6 @@
 <?php
 
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 
 class Attachment extends Element{
 
@@ -8,6 +8,29 @@ class Attachment extends Element{
         parent::__construct();
     }
 
+    public function loadData($json){
+        if(isset($json->contentType))
+            $this->contentType=$json->contentType;
+        if(isset($json->language))
+            $this->language=$json->language;
+        if(isset($json->data))
+            $this->data=$json->data;
+        if(isset($json->url))
+            $this->url=$json->url;
+        if(isset($json->size))
+            $this->size=$json->size;
+        if(isset($json->hash))
+            $this->hash=$json->hash;
+        if(isset($json->title))
+            $this->title=$json->title;
+        if(isset($json->creation))
+            $this->creation=$json->creation;
+    }
+    public static function Load($json){
+        $attachment = new Attachment();
+        $attachment->loadData($json);
+        return $attachment;
+    }
     public function setContentType($contentType){
         $this->contentType = $contentType;
     }

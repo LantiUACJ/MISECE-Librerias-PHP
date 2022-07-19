@@ -1,9 +1,39 @@
 <?php 
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 class HumanName extends Element{
 
     public function __construct() {
         parent::__construct();
+    }
+
+    public function loadData($json){
+        if(isset($json->text)){
+            $this->text = $json->text;
+        }
+        if(isset($json->use)){
+            $this->use = $json->use;
+        }
+        if(isset($json->period)){
+            $this->period = $json->period;
+        }
+        if(isset($json->prefix)){
+            $this->prefix = $json->prefix;
+        }
+        if(isset($json->given)){
+            $this->given = $json->given;
+        }
+        if(isset($json->family)){
+            $this->family = $json->family;
+        }
+        if(isset($json->suffix)){
+            $this->suffix = $json->suffix;
+        }
+    }
+
+    public static function Load($json){
+        $humanname = new HumanName();
+        $humanname->loadData($json);
+        return $humanname;
     }
 
     public function setText($text){

@@ -1,14 +1,29 @@
 <?php
 
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 
-use Modulo\Resource\Resource;
+use App\Fhir\Resource\Resource;
 
 class Annotation extends Element{
     public function __construct(){
         parent::__construct();
     }
 
+    private function loadData($json){
+        if(isset($json->authorReference))
+            $this->authorReference = Reference::Load($json->authorReference);
+        if(isset($json->authorString))
+            $this->authorString = $json->authorString;
+        if(isset($json->time))
+            $this->time = $json->time;
+        if(isset($json->text))
+            $this->text = $json->text;
+    }
+    public static function Load($json){
+        $annotation = new Annotation();
+        $annotation->loadData($json);
+        return $annotation;
+    }
     public function setAuthorReference(Resource $authorReference){
         $this->authorReference = $authorReference->toReference();
     }

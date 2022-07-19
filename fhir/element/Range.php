@@ -1,6 +1,6 @@
 <?php
 
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 
 class Range extends Element{
 
@@ -8,13 +8,25 @@ class Range extends Element{
         parent::__construct();
     }
 
+    public function loadData($json){
+        if(isset($json->low)){
+            $this->low = $json->low;
+        }
+        if(isset($json->high)){
+            $this->high = $json->high;
+        }
+    }
+    public static function Load($json){
+        $range = new Range();
+        $range->loadData($json);
+        return $range;
+    }
     public function setlow(Quantity $low){
         $this->low = $low;
     }
     public function sethigh(Quantity $high){
         $this->high = $high;
     }
-
     public function toArray(){
         $arrayData = parent::toArray();
         if(isset($this->low)){

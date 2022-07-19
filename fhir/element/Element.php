@@ -1,6 +1,6 @@
 <?php
 
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 
 class Element{
     public function __construct(){
@@ -16,8 +16,10 @@ class Element{
 
     public function toArray(){
         $arrayData = [];
-        foreach($this->extension as $extension){
-            $arrayData["extension"][] = $extension->toArray();
+        if($this->extension){
+            foreach($this->extension as $extension){
+                $arrayData["extension"][] = $extension->toArray();
+            }
         }
         if(isset($this->id)){
             $arrayData["id"] = $this->id;

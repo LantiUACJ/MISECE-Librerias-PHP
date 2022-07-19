@@ -1,6 +1,6 @@
 <?php
 
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 
 class Meta extends Element{
     public function __construct(){
@@ -9,46 +9,58 @@ class Meta extends Element{
         $this->security=[];
         $this->tag=[];
     }
-    public function setversionId($versionId){
+    private function loadData($json){
+        if(isset($json->versionId)) $this->setVersionId($json->versionId);
+        if(isset($json->lastUpdated)) $this->setLastUpdated($json->lastUpdated);
+        if(isset($json->source)) $this->setSource($json->source);
+        if(isset($json->profile))
+            foreach($json->profile as $profile)
+                $this->addProfile($profile);
+        if(isset($json->security))
+            foreach($json->security as $security)
+                $this->addSecurity(Coding::Load($security));
+        if(isset($json->tag))
+            foreach($json->tag as $tag)
+                $this->addTag(Coding::Load($tag));
+    }
+    public static function Load($json){
+        $meta = new Meta();
+        $meta->loadData($json);
+        return $meta;
+    }
+    public function setVersionId($versionId){
         $this->versionId = $versionId;
     }
-    public function setlastUpdated($lastUpdated){
+    public function setLastUpdated($lastUpdated){
         $this->lastUpdated = $lastUpdated;
     }
-    public function setsource($source){
+    public function setSource($source){
         $this->source = $source;
     }
-    public function addprofile($profile){
+    public function addProfile($profile){
         $this->profile[] = $profile;
     }
-    public function addsecurity(Coding $security){
+    public function addSecurity(Coding $security){
         $this->security[] = $security;
     }
-    public function addtag(Coding $tag){
+    public function addTag(Coding $tag){
         $this->tag[] = $tag;
     }
-
     public function toArray(){
         $arrayData = parent::toArray();
-
-        if(isset($versionId)){
-            $this->versionId = $versionId;
-        }
-        if(isset($lastUpdated)){
-            $this->lastUpdated = $lastUpdated;
-        }
-        if(isset($source)){
-            $this->source = $source;
-        }
-        foreach($this->profile as $profile){
-            $this->profile[] = $profile;
-        }
-        foreach($this->security as $security){
-            $this->security[] = $security->toArray();
-        }
-        foreach($this->tag as $tag){
-            $this->tag[] = $tag->toArray();
-        }
+        if(isset($this->versionId)) $arrayData["versionId"] = $this->versionId;
+        if(isset($this->lastUpdated)) $arrayData["lastUpdated"] = $this->lastUpdated;
+        if(isset($this->source)) $arrayData["source"] = $this->source;
+        if(isset($this->profile))
+            foreach($this->profile as $profile) 
+                $arrayData["profile"] = $profile;
+        if(isset($this->security))
+            foreach($this->security as $security)
+                $arrayData["security"] = $security->toArray();
+        if(isset($this->tag))
+            foreach($this->tag as $tag)
+                $arrayData["tag"] = $tag->toArray();
+        return $arrayData;
     }
 }
 

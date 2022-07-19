@@ -1,15 +1,25 @@
 <?php
 
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 
 class Quantity extends Element{
-
     public function __construct($value, $unit){
         parent::__construct();
         $this->setValue($value);
         $this->setUnit($unit);
     }
-
+    private function loadData($json){
+        if(isset($json->value)) $this->setValue($json->value);
+        if(isset($json->comparator)) $this->setComparator($json->comparator);
+        if(isset($json->unit)) $this->setUnit($json->unit);
+        if(isset($json->system)) $this->setSystem($json->system);
+        if(isset($json->code)) $this->setCode($json->code);
+    }
+    public static function Load($json){
+        $quantity = new Quantity("","");
+        $quantity->loadData($json);
+        return $quantity;
+    }
     public function setValue($value){
         $this->value = $value;
     }
@@ -25,7 +35,6 @@ class Quantity extends Element{
     public function setCode($code){
         $this->code = $code;
     }
-
     public function toArray(){
         $arrayData = parent::toArray();
         if(isset($this->value)){

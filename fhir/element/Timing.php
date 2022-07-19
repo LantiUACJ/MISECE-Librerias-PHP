@@ -1,6 +1,6 @@
 <?php
 
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 
 class Timing extends Element{
 
@@ -9,10 +9,76 @@ class Timing extends Element{
         $this->event = [];
     }
 
+    private function loadData($json){
+        foreach($json->event as $event){
+            $this->event = $event;
+        }
+        if($json->boundsDuration){
+            $this->repeat["boundsDuration"] =  $json->boundsDuration;
+        }
+        if($json->boundsRange){
+            $this->repeat["boundsRange"] = $json->boundsRange;
+        }
+        if($json->boundsPeriod){
+            $this->repeat["boundsPeriod"] = $json->boundsPeriod;
+        }
+        if($json->count){
+            $this->repeat["count"] = $json->count;
+        }
+        if($json->countMax){
+            $this->repeat["countMax"] = $json->countMax;
+        }
+        if($json->duration){
+            $this->repeat["duration"] = $json->duration;
+        }
+        if($json->durationMax){
+            $this->repeat["durationMax"] = $json->durationMax;
+        }
+        if($json->durationUnit){
+            $this->repeat["durationUnit"] = $json->durationUnit;
+        }
+        if($json->frequency){
+            $this->repeat["frequency"] = $json->frequency;
+        }
+        if($json->frequencyMax){
+            $this->repeat["frequencyMax"] = $json->frequencyMax;
+        }
+        if($json->period){
+            $this->repeat["period"] = $json->period;
+        }
+        if($json->periodMax){
+            $this->repeat["periodMax"] = $json->periodMax;
+        }
+        if($json->periodUnit){
+            $this->repeat["periodUnit"] = $json->periodUnit;
+        }
+        foreach($json->dayOfWeek as $dayOfWeek){
+            $this->repeat["dayOfWeek"][] = $dayOfWeek;
+        }
+        foreach($json->timeOfDay as $timeOfDay){
+            $this->repeat["timeOfDay"][] = $timeOfDay;
+        }
+        foreach($json->when as $when){
+            $this->repeat["when"][] = $when;
+        }
+        if($json->offset){
+            $this->repeat["offset"] = $json->offset;
+        }
+        if($json->code){
+            $this->code = $json->code;
+        }
+    }
+
+    public static function Load($json){
+        $timing = new Timing();
+        $timing->loadData($json);
+        return $timing;
+    }
+
     public function setEvent($event){
         $this->event = $event;
     }
-    public function setBoundsDuration(Duration $boundsDuration){
+    public function setBoundsDuration(Quantity $boundsDuration){
         $this->repeat["boundsDuration"] =  $boundsDuration;
     }
     public function setBoundsRange(Range $boundsRange){
@@ -122,13 +188,13 @@ class Timing extends Element{
             $arrayData["repeat"]["timeOfDay"][] = $timeOfDay;
         }
         foreach($this->when as $when){
-            $arrayData["repeat"]["when"][] = $this->when;
+            $arrayData["repeat"]["when"][] = $when;
         }
         if($this->offset){
             $arrayData["repeat"]["offset"] = $this->offset;
         }
         if($this->code){
-            $arrayData["code"] = $code;
+            $arrayData["code"] = $this->code;
         }
 
         return $arrayData;

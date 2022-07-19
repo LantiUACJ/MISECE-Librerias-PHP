@@ -1,15 +1,19 @@
 <?php 
-namespace Modulo\Resource;
+namespace App\Fhir\Resource;
 
-use Modulo\Element\Identifier;
-use Modulo\Element\Coding;
-//use Modulo\Element\Reference;
+use App\Fhir\Element\Identifier;
+use App\Fhir\Element\Coding;
+use App\Fhir\Element\CodeableConcept;
+use App\Fhir\Element\Annotation;
+use App\Fhir\Element\Reference;
+use App\Fhir\Element\ImageStudySeries;
+use App\Fhir\Exception\TextNotDefinedException;
 
 class ImagingStudy extends DomainResource{
 
-    public function __construct(){
+    public function __construct($json = null){
         $this->resourceType = "ImagingStudy";
-        parent::__construct();
+        parent::__construct($json);
         $this->identifier = [];
         $this->modality = [];
         $this->basedOn = [];
@@ -19,6 +23,56 @@ class ImagingStudy extends DomainResource{
         $this->reasonReference = [];
         $this->note = [];
         $this->series = [];
+        if($json) $this->loadData($json);
+    }
+    private function loadData($json){
+        if(isset($json->identifier))
+            foreach($json->identifier as $identifier)
+                $this->identifier[] = Identifier::Load($identifier);
+        if(isset($json->status))
+            $this->status = $json->status;
+        if(isset($json->modality))
+            foreach($json->modality as $modality)
+                $this->modality[] = Coding::Load($modality);
+        if(isset($json->subject))
+            $this->subject = Reference::Load($json->subject);
+        if(isset($json->encounter))
+            $this->encounter = Reference::Load($json->encounter);
+        if(isset($json->started))
+            $this->started = $json->started;
+        if(isset($json->basedOn))
+            foreach($json->basedOn as $baseOn)
+                $this->basedOn[] = Reference::Load($baseOn);
+        if(isset($json->referrer))
+            $this->referrer = Reference::Load($json->referrer);
+        if(isset($json->interpreter))
+            foreach($json->interpreter as $interpreter)
+                $this->interpreter[] = Reference::Load($interpreter);
+        if(isset($json->endpoint))
+            foreach($json->endpoint as $endpoint)
+                $this->endpoint[] = Reference::Load($endpoint);
+        if(isset($json->numberOfSeries))
+            $this->numberOfSeries = $json->numberOfSeries;
+        if(isset($json->numberOfInstances))
+            $this->numberOfInstances = $json->numberOfInstances;
+        if(isset($json->procedureReference))
+            $json->procedureReference = Reference::Load($json->procedureReference);
+        if(isset($json->location))
+            $json->location = Reference::Load($json->location);
+        if(isset($json->reasonCode))
+            foreach($json->reasonCode as $reasonCode)
+                $this->reasonCode[] = CodeableConcept::Load($reasonCode);
+        if(isset($json->reasonReference))
+            foreach($json->reasonReference as $reasonReference)
+                $this->reasonReference[] = Reference::Load($reasonReference);
+        if(isset($json->note))
+            foreach($json->note as $note)
+                $this->note[] = Annotation::Load($note);
+        if(isset($json->description))
+            $json->description = $json->description;
+        if(isset($json->series))
+            foreach($json->series as $series)
+                $this->series[] = ImageStudySeries::Load($series);
     }
     public function setIdentifier(Identifier $identifier){
         $this->identifier[] = $identifier;
@@ -35,7 +89,7 @@ class ImagingStudy extends DomainResource{
 			throw new TextNotDefinedException("Status", implode(", ",$only));
         }
     }
-    public function setModality(Coding $modality){
+    public function addModality(Coding $modality){
         $this->modality[] = $modality;
     }
     public function setSubject(Resource $subject){
@@ -54,7 +108,7 @@ class ImagingStudy extends DomainResource{
         $this->referrer = $referrer->toReference();
     }
     public function addInterpreter(Resource $interpreter){
-        $this->interpreter[] = $interprete->toReference();;
+        $this->interpreter[] = $interpreter->toReference();;
     }
     public function addEndpoint(Resource $endpoint){
         $this->endpoint[] = $endpoint->toReference();
@@ -68,7 +122,7 @@ class ImagingStudy extends DomainResource{
     public function setProcedureReference(Resource $procedureReference){
         $this->procedureReference = $procedureReference->toReference();
     }
-    public function setLocation(Reference $location){
+    public function setLocation(Resource $location){
         $this->location = $location;
     }
     public function addReasonCode(CodeableConcept $reasonCode){
@@ -83,13 +137,9 @@ class ImagingStudy extends DomainResource{
     public function setDescription($description){
         $this->description = $description;
     }
-    public static function Series(){
-        return new Series();
-    }
-    public function addSeries(Series $series){
+    public function addSeries(ImageStudySeries $series){
         $this->series[] = $series;
     }
-
     public function toArray(){
         $arrayData = parent::toArray();
 
@@ -112,7 +162,7 @@ class ImagingStudy extends DomainResource{
             $arrayData["started"] = $this->started;
         }
         foreach($this->basedOn as $baseOn){
-            $arrayData["basedOn"][] = $basedOn->toArray();
+            $arrayData["basedOn"][] = $baseOn->toArray();
         }
         if(isset($this->referrer)){
             $arrayData["referrer"] = $this->referrer->toArray();
@@ -124,16 +174,16 @@ class ImagingStudy extends DomainResource{
             $arrayData["endpoint"][] = $endpoint->toArray();
         }
         if(isset($this->numberOfSeries)){
-            $this->numberOfSeries = $numberOfSeries;
+            $arrayData["numberOfSeries"] = $this->numberOfSeries;
         }
         if(isset($this->numberOfInstances)){
-            $this->numberOfInstances = $numberOfInstances;
+            $arrayData["numberOfInstances"] = $this->numberOfInstances;
         }
         if(isset($this->procedureReference)){
-            $this->procedureReference = $procedureReference->toArray();
+            $this->procedureReference = $this->procedureReference->toArray();
         }
         if(isset($this->location)){
-            $this->location = $location->toArray();
+            $this->location = $this->location->toArray();
         }
         foreach($this->reasonCode as $reasonCode){
             $arrayData["reasonCode"][] = $reasonCode->toArray();
@@ -145,106 +195,11 @@ class ImagingStudy extends DomainResource{
             $arrayData["note"][] = $note->toArray();
         }
         if(isset($this->description)){
-            $this->description = $description;
+            $this->description = $this->description;
         }
         foreach($this->series as $series){
             $arrayData["series"][] = $series->toArray();
         }
-        return $arrayData;
-    }
-}
-class Series{
-
-    public function __construct(){
-        $this->endpoint = [];
-        $this->specimen = [];
-        $this->performer = [];
-        $this->instance = [];
-    }
-    
-    public function setUid($uid){
-        $this->uid = $uid;
-    }
-    public function setNumber($number){
-        $this->number = $number;
-    }
-    public function setModality(Coding $modality){
-        $this->modality = $modality;
-    }
-    public function setDescription($description){
-        $this->description = $description;
-    }
-    public function setNumberOfInstances(CodeableConcept $numberOfInstances){
-        $this->numberOfInstances = $numberOfInstances;
-    }
-    public function addEndpoint(Reference $endpoint){
-        $this->endpoint[] = $endpoint;
-    }
-    public function setBodySite(Coding $bodySite){
-        $this->bodySite = $bodySite;
-    }
-    public function setLaterality(Coding $laterality){
-        $this->laterality = $laterality;
-    }
-    public function addSpecimen(Reference $specimen){
-        $this->specimen[] = $specimen;
-    }
-    public function setStarted($started){
-        $this->started = $started;
-    }
-    public function setPerformer(CodeableConcept $function, Resource $actor){
-        $performer = [
-            "function"=>$function,
-            "actor"=>$actor->toReference(),
-        ];
-        $this->performer[] = $performer;
-    }
-    public function addInstance($uid, $number, $title, Coding $sopClass){
-        $instance = [
-            "uid"=>$uid,
-            "number"=>$number,
-            "title"=>$title,
-            "sopClass"=>$sopClass,
-        ];
-
-        $this->instance[] = $instance;
-    }
-    public function toArray(){
-        $arrayData = [];
-        if(isset($this->uid))
-            $arrayData["uid"] = $uid;
-        if(isset($this->number))
-            $arrayData["number"] = $number;
-        if(isset($this->modality))
-            $arrayData["modality"] = $modality->toArray();
-        if(isset($this->description))
-            $arrayData["description"] = $description;
-        if(isset($this->numberOfInstances))
-            $arrayData["numberOfInstances"] = $numberOfInstances->toArray();
-        foreach($this->endpoint as $endpoint)
-            $arrayData["endpoint"][] = $endpoint->toArray();
-        if(isset($this->bodySite))
-            $arrayData["bodySite"] = $bodySite->toArray();
-        if(isset($this->laterality))
-            $arrayData["laterality"] = $laterality->toArray();
-        foreach($this->specimen as $specimen)
-            $arrayData["specimen"] = $specimen->toArray();
-        if(isset($this->started))
-            $arrayData["started"] = $started;
-        if(isset($this->performer))
-            $arrayData["performer"][] = [
-                "actor"=>$performer->actor->toArray(),
-                "function"=>$performer->function->toArray()
-            ];
-        if(isset($this->instance))
-            $arrayData["instance"][] = [
-                "uid"=>$uid,
-                "number"=>$number,
-                "title"=>$title,
-                "sopClass"=>$sopClass->toArray(),
-            ];
-            
-
         return $arrayData;
     }
 }

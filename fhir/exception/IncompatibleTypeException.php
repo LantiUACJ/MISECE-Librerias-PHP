@@ -1,6 +1,6 @@
 <?php
 
-namespace Modulo\Exception;
+namespace App\Fhir\Exception;
 
 class IncompatibleTypeException extends \Exception{
 

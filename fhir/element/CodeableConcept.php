@@ -1,5 +1,5 @@
 <?php
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 
 class CodeableConcept extends Element{
 
@@ -9,6 +9,17 @@ class CodeableConcept extends Element{
         $this->setText($text);
         if($coding) $this->addCoding($coding);
     }
+    private function loadData($json){
+        if(isset($json->text)) $this->setText($json->text);
+        if(isset($json->coding)) 
+            foreach($json->coding as $coding)
+                $this->addCoding(Coding::Load($coding));
+    }
+    public static function Load($json){
+        $codeableConcept = new CodeableConcept("");
+        $codeableConcept->loadData($json);
+        return $codeableConcept;
+    }
     public function addCoding(Coding $coding){
         $this->coding[] = $coding;
     }
@@ -17,8 +28,9 @@ class CodeableConcept extends Element{
     }
     public function toArray(){
         $arrayData = parent::toArray();
-        $arrayData["text"] = $this->text;
-        if(sizeof($this->coding) > 0){
+        if(isset($this->text) && $this->text)
+            $arrayData["text"] = $this->text;
+        if($this->coding){
             foreach($this->coding as $coding)
                 $arrayData["coding"][] = $coding->toArray();
         }

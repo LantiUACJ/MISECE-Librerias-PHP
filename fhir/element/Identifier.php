@@ -1,10 +1,10 @@
 <?php
 
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 
-use Modulo\Resource\Resource;
+use App\Fhir\Resource\Resource;
 
-use Modulo\Exception\TextNotDefinedException;
+use App\Fhir\Exception\TextNotDefinedException;
 
 class Identifier extends Element{
 	private $usecode = ["usual","official","temp","secondary","old"];
@@ -17,6 +17,19 @@ class Identifier extends Element{
 		if($type) $this->setType($type);
 	}
 
+	private function loadData($json){
+		if(isset($json->use)) $this->setUse($json->use);
+		if(isset($json->system)) $this->setSystem($json->system);
+		if(isset($json->period)) $this->setPeriod(Period::Load($json->period));
+		if(isset($json->assigner)) $this->assigner = Reference::Load($json->assigner);
+		if(isset($json->type)) $this->setType( CodeableConcept::Load($json->type));
+		if(isset($json->value)) $this->setValue( $json->value);
+	}
+	public static function Load($json){
+		$identifier = new Identifier("official","");
+		$identifier->loadData($json);
+		return $identifier;
+	}
 	public function setUse($use){
 		foreach($this->usecode as $code){
 			if(strtolower($use) == $code){
@@ -44,10 +57,12 @@ class Identifier extends Element{
 	public function toArray(){
         $arrayData = parent::toArray();
 		
-		$arrayData["use"] = $this->use;
-		$arrayData["value"] = $this->value;
-
+		if(isset($this->use)) $arrayData["use"] = $this->use;
+		if(isset($this->system)) $arrayData["system"] = $this->system;
+		if(isset($this->period)) $arrayData["period"] = $this->period->toArray();
+		if(isset($this->assigner)) $arrayData["assigner"] = $this->assigner->toArray();
 		if(isset($this->type)) $arrayData["type"] = $this->type->toArray();
+		if(isset($this->value)) $arrayData["value"] = $this->value;
 
 		return $arrayData;
 	}

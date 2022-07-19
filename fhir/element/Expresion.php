@@ -1,6 +1,6 @@
 <?php 
 
-namespace Modulo\Element;
+namespace App\Fhir\Element;
 
 class Expresion extends Element{
 
