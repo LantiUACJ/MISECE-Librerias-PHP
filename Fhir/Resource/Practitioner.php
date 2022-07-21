@@ -65,7 +65,8 @@ class Practitioner extends DomainResource{
                 $this->qualification[] = $data;
             }
         if(isset($json->communication)){
-            $this->communication = CodeableConcept::Load($json->communication);
+            foreach($json->communication as $communication)
+                $this->communication[] = CodeableConcept::Load($communication);
         }
     }
     public function addIdentifier(Identifier $identifier){
@@ -93,12 +94,12 @@ class Practitioner extends DomainResource{
     public function setPhoto(Attachment $photo){
         $this->photo = $photo;
     }
-    public function addQualification(Identifier $identifier, CodeableConcept $code, Period $period, Reference $issuer){
+    public function addQualification(Identifier $identifier, CodeableConcept $code, Period $period, Resource $issuer){
         $this->qualification[] = [
             "identifier" => $identifier,
             "code" => $code,
             "period" => $period,
-            "issuer" => $issuer
+            "issuer" => $issuer->toReference()
         ];
     }
     public function setCommunication(CodeableConcept $communication){
@@ -148,7 +149,8 @@ class Practitioner extends DomainResource{
                 $arrayData["qualification"][] = $data;
             }
         if(isset($this->communication)){
-            $arrayData["communication"] = $this->communication->toArray();
+            foreach($this->communication as $communication)
+                $arrayData["communication"][] = $communication->toArray();
         }
         return $arrayData;
     }

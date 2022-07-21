@@ -12,7 +12,7 @@ use App\Fhir\Element\Reference;
 class Composition extends DomainResource{
     public function __construct($json = null){
         $this->resourceType = "Composition";
-        parent::__construct();
+        parent::__construct($json);
         $this->category = [];
         $this->author = [];
         $this->relatesTo = [];
@@ -26,13 +26,15 @@ class Composition extends DomainResource{
         if(isset($json->identifier)) $this->setIdentifier(Identifier::Load($json->identifier));
         if(isset($json->status)) $this->setStatus($json->status);
         if(isset($json->type)) $this->setType(CodeableConcept::Load($json->type));
-        if(isset($json->subject)) $this->subect = Reference::Load($json->subject);
+        if(isset($json->subject)) $this->subject = Reference::Load($json->subject);
         if(isset($json->encounter)) $this->encounter = Reference::Load($json->encounter);
         if(isset($json->date)) $this->setDate($json->date);
         if(isset($json->title)) $this->setTitle($json->title);
         if(isset($json->confidentiality)) $this->setConfidentiality($json->confidentiality);
         if(isset($json->custodian)) $this->custodian = Reference::Load($json->custodian);
-        if(isset($json->category)) $this->addCategory(CodeableConcept::Load($json->category));
+        if(isset($json->category)) 
+            foreach($json->category as $category)
+                $this->addCategory(CodeableConcept::Load($category));
         if(isset($json->author)) 
             foreach($json->author as $author)
                 $this->author[] = Reference::Load($author);
@@ -106,7 +108,7 @@ class Composition extends DomainResource{
         $this->title = $title;
     }
     public function setConfidentiality($confidentiality){
-        $this->confidiantility = $confidentiality;
+        $this->confidentiality = $confidentiality;
     }
     public function setCustodian(Resource $custodian){
         $this->custodian = $custodian;
@@ -159,19 +161,21 @@ class Composition extends DomainResource{
         if(isset($this->type)) $array["type"] = $this->type->toArray();
         if(isset($this->category)) 
             foreach($this->category as $category)
-                $array["category"] = $category->toArray();
+                $array["category"][] = $category->toArray();
         if(isset($this->subject)) $array["subject"] = $this->subject->toArray();
         if(isset($this->encounter)) $array["encounter"] = $this->encounter->toArray();
         if(isset($this->date)) $array["date"] = $this->date;
-        if(isset($this->author)){ 
+        if(isset($this->author) && $this->author){ 
             $authors = [];
             foreach($this->author as $author)
                 $authors[] = $author->toArray();
             $array["author"] = $authors;
         }
+        if(isset($this->custodian)) 
+            $array["custodian"] = $this->custodian->toArray();
         if(isset($this->title)) $array["title"] = $this->title;
         if(isset($this->confidentiality)) 
-            $array["confidentiality"] = $this->confidentiality->toArray();
+            $array["confidentiality"] = $this->confidentiality;
         if(isset($this->attester) && $this->attester) {
             $array["attester"] = [];
             foreach($this->attester as $attester){
@@ -223,7 +227,7 @@ class Composition extends DomainResource{
         }
         if(isset($this->section)) 
             foreach($this->section as $section)
-                $array["section"] = $section->toArray();
+                $array["section"][] = $section->toArray();
         return $array;
     }
 }

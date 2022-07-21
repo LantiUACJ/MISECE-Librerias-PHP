@@ -18,7 +18,7 @@ class Identifier extends Element{
 	}
 
 	private function loadData($json){
-		if(isset($json->use)) $this->setUse($json->use);
+		if(isset($json->use) && $json->use) $this->setUse($json->use);
 		if(isset($json->system)) $this->setSystem($json->system);
 		if(isset($json->period)) $this->setPeriod(Period::Load($json->period));
 		if(isset($json->assigner)) $this->assigner = Reference::Load($json->assigner);
@@ -27,6 +27,7 @@ class Identifier extends Element{
 	}
 	public static function Load($json){
 		$identifier = new Identifier("official","");
+		$identifier->use = "";
 		$identifier->loadData($json);
 		return $identifier;
 	}
@@ -57,7 +58,7 @@ class Identifier extends Element{
 	public function toArray(){
         $arrayData = parent::toArray();
 		
-		if(isset($this->use)) $arrayData["use"] = $this->use;
+		if(isset($this->use) && $this->use) $arrayData["use"] = $this->use;
 		if(isset($this->system)) $arrayData["system"] = $this->system;
 		if(isset($this->period)) $arrayData["period"] = $this->period->toArray();
 		if(isset($this->assigner)) $arrayData["assigner"] = $this->assigner->toArray();
