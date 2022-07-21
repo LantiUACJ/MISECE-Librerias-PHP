@@ -25,10 +25,12 @@ class Identifier extends Element{
 		if(isset($json->type)) $this->setType( CodeableConcept::Load($json->type));
 		if(isset($json->value)) $this->setValue( $json->value);
 	}
-	public static function Load($json){
+	public static function Load($json, $check = false){
 		$identifier = new Identifier("official","");
 		$identifier->use = "";
 		$identifier->loadData($json);
+		if($check)
+			dd($json);
 		return $identifier;
 	}
 	public function setUse($use){

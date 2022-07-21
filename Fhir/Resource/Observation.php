@@ -438,7 +438,7 @@ class Observation extends DomainResource{
             }
         }
         foreach($this->hasMember as $hasMember){
-            $arrayData["hasMember"] = $hasMember->toArray();
+            $arrayData["hasMember"][] = $hasMember->toArray();
         }
         foreach($this->derivedFrom as $derivedFrom){
             $arrayData["derivedFrom"] = $derivedFrom;

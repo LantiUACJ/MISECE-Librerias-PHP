@@ -55,7 +55,8 @@ class Practitioner extends DomainResource{
             foreach($json->qualification as $qualification){
                 $data = [];
                 if(isset($qualification->identifier))
-                    $data["identifier"] = Identifier::Load($qualification->identifier);
+                    foreach($qualification->identifier as $identifier)
+                        $data["identifier"][] = Identifier::Load($identifier);
                 if(isset($qualification->code))
                     $data["code"] = CodeableConcept::Load($qualification->code);
                 if(isset($qualification->period))
@@ -138,13 +139,14 @@ class Practitioner extends DomainResource{
         if(isset($this->qualification))
             foreach($this->qualification as $qualification){
                 $data = [];
-                if(isset($qualification->identifier))
-                    $data["identifier"] = $qualification["identifier"]->toArray();
-                if(isset($qualification->code))
+                if(isset($qualification["identifier"]))
+                    foreach($qualification["identifier"] as $identifier)
+                        $data["identifier"][] = $identifier->toArray();
+                if(isset($qualification["code"]))
                     $data["code"] = $qualification["code"]->toArray();
-                if(isset($qualification->period))
+                if(isset($qualification["period"]))
                     $data["period"] = $qualification["period"]->toArray();
-                if(isset($qualification->issuer))
+                if(isset($qualification["issuer"]))
                     $data["issuer"] = $qualification["issuer"]->toArray();
                 $arrayData["qualification"][] = $data;
             }

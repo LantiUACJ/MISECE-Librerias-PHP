@@ -9,8 +9,8 @@ use App\Fhir\Element\Ratio;
 
 class Medication extends DomainResource{
     public function __construct($json = null){
-        $this->resourceType = "Medication";
         parent::__construct($json);
+        $this->resourceType = "Medication";
         $this->identifier = [];
         $this->ingredient = [];
         if($json) $this->loadData($json);
@@ -95,9 +95,9 @@ class Medication extends DomainResource{
     }
     public function toArray(){
         $arrayData = parent::toArray();
+        
 
         if(isset($this->identifier) && $this->identifier){
-            $arrayData = [];
             foreach($this->identifier as $identifier){
                 $arrayData["identifier"][] = $identifier->toArray();
             }
@@ -137,7 +137,6 @@ class Medication extends DomainResource{
                 $data["expirationDate"] = $this->batch["expirationDate"];
             $arrayData["batch"] = $data;
         }
-
         return $arrayData;
     }
 }
