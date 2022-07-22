@@ -154,6 +154,31 @@ class Composition extends DomainResource{
         $this->setType(new CodeableConcept("Nota de evolución", new Coding("Nota de evolución", "D3", "urn:NOM-004-SSA3-2012")));
     }
 
+    public function esNotaEvolucion(){
+        if(isset($this->type) && isset($this->type->coding) && isset($this->type->coding[0]->code)){
+            return $this->type->coding[0]->code == "D2";
+        }
+        return false;
+    }
+    public function esHistoriaClinica(){
+        if(isset($this->type) && isset($this->type->coding) && isset($this->type->coding[0]->code)){
+            return $this->type->coding[0]->code == "D3";
+        }
+        return false;
+    }
+    public function getReferences(){
+        $data = [];
+        foreach($this->section as $section){
+            if(isset($section->section)){
+                $data = array_merge($section->getReferences(), $data);
+            }
+            if(isset($section->entry)){
+                $data = array_merge($section->entry, $data);
+            }
+        }
+        return $data;
+    }
+
     public function toArray(){
         $array = parent::toArray();
         if(isset($this->identifier)) $array["identifier"] = $this->identifier->toArray();

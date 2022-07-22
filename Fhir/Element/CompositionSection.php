@@ -56,8 +56,8 @@ class CompositionSection extends Element{
     public function setOrderedBy(CodeableConcept $orderedBy){
         $this->orderedBy = $orderedBy;
     }
-    public function addEntry($entry){
-        $this->entry[] = $entry;
+    public function addEntry(Resource $entry){
+        $this->entry[] = $entry->toReference();
     }
     public function setEmptyReason(CodeableConcept $emptyReason){
         $this->emptyReason = $emptyReason;
