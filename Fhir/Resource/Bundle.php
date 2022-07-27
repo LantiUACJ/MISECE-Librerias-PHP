@@ -54,24 +54,48 @@ class Bundle extends DomainResource{
     }
     /**
      * @param string $id
+     * @param integer $skip
+     * @param integer $mark
      * @return \App\Fhir\Resource\Resource
     */
-    public function findResource($id){
-        foreach($this->entry as $entry){
+    public function findResource($id, $skip = -1, $mark=0){
+        foreach($this->entry as $key => $entry){
             $resource = $entry;
-            if(isset($resource->id) && $resource->id == $id){
+            if($skip != $entry->mark && isset($resource->id) && $resource->id == $id){
+                $entry->mark=$mark;
                 return $entry;
             }
         }
     }
-    public function findCompositions(){
+    public function findCompositions($skip = -1, $mark = 0){
         $data = [];
-        foreach($this->entry as $entry){
-            if($entry->resourceType == "Composition")
+        foreach($this->entry as $key => $entry){
+            if($skip != $entry->mark && $entry->resourceType == "Composition"){
+                $entry->mark = $mark;
                 $data[] = $entry;
+            }
         }
         return $data;
     }
+    public function findPatient($skip = -1, $mark = 0){
+        foreach($this->entry as $key => $entry){
+            if($skip != $entry->mark && $entry->resourceType == "Patient"){
+                $entry->mark = $mark;
+                return $entry;
+            }
+        }
+    }
+    public function findAllergy($skip = -1, $mark = 0){
+        $data = [];
+        foreach($this->entry as $key => $entry){
+            if($skip != $entry->mark && $entry->resourceType == "AllergyIntolerance"){
+                $entry->mark = $mark;
+                $data [] = $entry;
+            }
+        }
+        return $data;
+    }
+
     public function toArray(){
         $arrayData = parent::toArray();
 
