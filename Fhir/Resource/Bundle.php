@@ -19,9 +19,11 @@ class Bundle extends DomainResource{
             $json = json_decode($json);
         }
         if(isset($json->entry)){
-            foreach($json->entry as $entry)
-                if(isset($entry->resource) && isset($entry->resource->resourceType))
+            foreach($json->entry as $entry){
+                if(isset($entry->resource) && isset($entry->resource->resourceType)){
                     $this->addEntry(ResourceBuilder::make($entry->resource));
+                }
+            }
         }
         if(isset($json->identifier)){
             $this->setIdentifier(Identifier::Load($json->identifier));
@@ -50,7 +52,7 @@ class Bundle extends DomainResource{
         $this->total = $total;
     }
     public function addEntry(Resource $resource){
-        $this->entry[] = $resource;
+        $this->entry[$resource->id] = $resource;
     }
     /**
      * @param string $id
@@ -59,6 +61,15 @@ class Bundle extends DomainResource{
      * @return \App\Fhir\Resource\Resource
     */
     public function findResource($id, $skip = -1, $mark=0){
+        /*
+        if(!isset($this->entry[$id])){
+            dd([$id,$this->entry]);
+        }
+        $resource = $this->entry[$id];
+        if($skip != $resource->mark && isset($resource->id) && $resource->id == $id){
+            $resource->mark=$mark;
+            return $resource;
+        }*/
         foreach($this->entry as $key => $entry){
             $resource = $entry;
             if($skip != $entry->mark && isset($resource->id) && $resource->id == $id){

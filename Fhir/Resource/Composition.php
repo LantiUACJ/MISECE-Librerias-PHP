@@ -179,6 +179,16 @@ class Composition extends DomainResource{
         return $data;
     }
 
+    public function toString(){
+        if($this->esNotaEvolucion()){
+            return "Nota de evolución";
+        }
+        if($this->esHistoriaClinica()){
+            return "Historia clínica";
+        }
+        return "Composición";
+    }
+
     public function toArray(){
         $array = parent::toArray();
         if(isset($this->identifier)) $array["identifier"] = $this->identifier->toArray();

@@ -53,9 +53,13 @@ class Resource{
     public function toJson(){
         return json_encode($this->toArray());
     }
+    public function toString(){
+        return "";
+    }
     
     /* Funciones para clases heredadas */
     public function toReference(){
+        $this->referenceDisplay = $this->toString();
         if(isset($this->referenceDisplay))
             return new Reference($this->resourceType, $this->id, $this->referenceDisplay);
         return new Reference($this->resourceType, $this->id);
