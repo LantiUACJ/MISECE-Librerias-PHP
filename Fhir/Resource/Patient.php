@@ -239,10 +239,12 @@ class Patient extends DomainResource{
                 $arrayData["contact"]["gender"] = $contact->gender;
         }
         foreach($this->communication as $communication){
-            $arrayData["communication"][] = [
-                "language"=>$communication["language"],
-                "preferred"=>$communication["preferred"],
-            ];
+            $data = [];
+            if(isset($communication["language"]) && $communication["language"])
+                $data["language"] = $communication["language"]->toArray();
+            if(isset($communication["preferred"]) && $communication["preferred"])
+                $data["preferred"] = $communication["preferred"];
+            $arrayData["communication"][] = $data;
         }
         foreach($this->generalPractitioner as $generalPractitioner){
             $arrayData["generalPractitioner"][] = $generalPractitioner->toArray();

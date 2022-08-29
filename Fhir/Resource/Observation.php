@@ -419,39 +419,52 @@ class Observation extends DomainResource{
         foreach($this->performer as $performer){
             $arrayData["performer"][] = $performer->toArray();
         }
-        if(isset($this->valueQuantity)){
+        $value = 0;
+        if(isset($this->valueQuantity) && $this->valueQuantity){
             $arrayData["valueQuantity"] = $this->valueQuantity->toArray();
+            $value +=1;
         }
-        if(isset($this->valueCodeableConcept)){
+        if(isset($this->valueCodeableConcept) && $this->valueCodeableConcept){
             $arrayData["valueCodeableConcept"] = $this->valueCodeableConcept->toArray();
+            $value +=1;
         }
-        if(isset($this->valueString)){
+        if(isset($this->valueString) && $this->valueString){
             $arrayData["valueString"] = $this->valueString;
+            $value +=1;
         }
-        if(isset($this->valueBoolean)){
+        if(isset($this->valueBoolean) && $this->valueBoolean){
             $arrayData["valueBoolean"] = $this->valueBoolean;
+            $value +=1;
         }
-        if(isset($this->valueInteger)){
+        if(isset($this->valueInteger) && $this->valueInteger){
             $arrayData["valueInteger"] = $this->valueInteger;
+            $value +=1;
         }
-        if(isset($this->valueRange)){
+        if(isset($this->valueRange) && $this->valueRange){
             $arrayData["valueRange"] = $this->valueRange->toArray();
+            $value +=1;
         }
-        if(isset($this->valueRatio)){
+        if(isset($this->valueRatio) && $this->valueRatio){
             $arrayData["valueRatio"] = $this->valueRatio->toArray();
+            $value +=1;
         }
-        if(isset($this->valueSampledData)){
+        if(isset($this->valueSampledData) && $this->valueSampledData){
             $arrayData["valueSampledData"] = $this->valueSampledData->toArray();
+            $value +=1;
         }
-        if(isset($this->valueTime)){
+        if(isset($this->valueTime) && $this->valueTime){
             $arrayData["valueTime"] = $this->valueTime;
+            $value +=1;
         }
-        if(isset($this->valueDateTime)){
+        if(isset($this->valueDateTime) && $this->valueDateTime){
             $arrayData["valueDateTime"] = $this->valueDateTime;
+            $value +=1;
         }
-        if(isset($this->valuePeriod)){
+        if(isset($this->valuePeriod) && $this->valuePeriod){
             $arrayData["valuePeriod"] = $this->valuePeriod->toArray();
+            $value +=1;
         }
+
         if(isset($this->dataAbsentReason)){
             $arrayData["dataAbsentReason"] = $this->dataAbsentReason->toArray();
         }

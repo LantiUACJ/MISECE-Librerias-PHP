@@ -10,8 +10,8 @@ use App\Fhir\Element\Reference;
 
 class PractitionerRole extends DomainResource{
     public function __construct($json = null){
-        parent::__construct($json);
         $this->resourceType = "PractitionerRole";
+        parent::__construct($json);
 
         $this->identifier = [];
         $this->code = [];

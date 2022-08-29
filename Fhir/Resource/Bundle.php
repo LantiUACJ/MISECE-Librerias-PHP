@@ -6,9 +6,10 @@ use App\Fhir\Element\Identifier;
 class Bundle extends DomainResource{
 
     public function __construct($json = null){
-        parent::__construct($json);
         $this->resourceType = "Bundle";
+        parent::__construct($json);
         $this->entry = [];
+        $this->type = "history";
         if($json){
             $this->loadData($json);
         }
@@ -78,12 +79,20 @@ class Bundle extends DomainResource{
             }
         }
     }
-    public function findCompositions($skip = -1, $mark = 0){
+    public function findCompositions($skip = -1, $mark = 0, $tipo = 0){
         $data = [];
         foreach($this->entry as $key => $entry){
-            if($skip != $entry->mark && $entry->resourceType == "Composition"){
+            if($skip != $entry->mark && $entry->resourceType == "Composition" && $tipo == 0 && $entry->esNotaEvolucion()){
                 $entry->mark = $mark;
                 $data[] = $entry;
+            }
+            if($skip != $entry->mark && $entry->resourceType == "Composition" && $tipo == 1 && $entry->esHistoriaClinica()){
+                $entry->mark = $mark;
+                $data[] = $entry;
+            }
+            if($skip != $entry->mark && $entry->resourceType == "Bundle"){
+                $bundle = $entry->findCompositions($skip, $mark, $tipo);
+                array_merge($data, $bundle);
             }
         }
         return $data;
@@ -127,7 +136,18 @@ class Bundle extends DomainResource{
         foreach ($this->entry as $entry) {
             $current = [];
             $current["resource"]=$entry->toArray();
-            $current["fullUrl"]=$entry->id;
+            $current["fullUrl"]= $entry->resourceType . '/' . $entry->id;
+            if($this->type == "history"){
+                $current["request"] = [
+                    "method"=>"POST",
+                    "url"=>$entry->resourceType
+                ];
+    
+                $current["response"] = [
+                    "status"=>"200 ok"
+                ];
+            }
+            
             $entryArray[] = $current;
         }
         $arrayData["entry"] = $entryArray;
