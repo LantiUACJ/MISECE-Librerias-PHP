@@ -70,12 +70,37 @@ class Practitioner extends DomainResource{
                 $this->communication[] = CodeableConcept::Load($communication);
         }
     }
+
+
+    /* obligatorio:
+        identifier: \Fhir\Element\Identifier: (array 1..*) (curp)
+            "use": "official",
+            "system": "urn:oid:2.16.840.1.113883.4.629",
+            "value": 
+    */
     public function addIdentifier(Identifier $identifier){
         $this->identifier[] = $identifier;
     }
     public function setActive($active){
         $this->active = $active;
     }
+    /* obligatorio
+        "name": \Fhir\Element\HumanName (array 1..*)
+            "use": 
+            "_family": // esto esta raro pero son cosas de jarero
+                "extension": \Fhir\Element\Extension (array 2..*)
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/humanname-fathers-family",
+                        "valueString": 
+                    },
+                    {
+                        "url": "http://hl7.org/fhir/StructureDefinition/humanname-mothers-family",
+                        "valueString":
+                    }
+            "family": 
+            "given": array(1..*) strings
+            "text": 
+    */
     public function addName(HumanName $name){
         $this->name[] = $name;
     }
@@ -95,6 +120,26 @@ class Practitioner extends DomainResource{
     public function setPhoto(Attachment $photo){
         $this->photo = $photo;
     }
+    /* 
+        obligatorio
+        qualification: array(1..*)
+            "identifier": \Fhir\Element\Identifier
+                { \\ no se que sea esto, a la mejor es la cedula
+                    "system": "urn:oid:2.16.840.1.113883.3.215.12.18",
+                    "value": "0000000"
+                }
+            ],
+            "code": \Fhir\Element\CodeableConcept
+                "coding": \Fhir\Element\Coding
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/v2-0360",
+                        "code": "MD",
+                        "display": "Doctor of Medicine"
+                    }
+                ],
+                "text": "Médico"
+            }
+    */
     public function addQualification(Identifier $identifier, CodeableConcept $code, Period $period, Resource $issuer){
         $this->qualification[] = [
             "identifier" => $identifier,
@@ -106,6 +151,9 @@ class Practitioner extends DomainResource{
     public function setCommunication(CodeableConcept $communication){
         $this->communication = $communication;
     }
+
+
+
     public function toArray(){
         $arrayData = parent::toArray();
         if(isset($this->identifier))

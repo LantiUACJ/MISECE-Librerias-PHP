@@ -173,9 +173,12 @@ class Observation extends DomainResource{
             }
         }
     }
+    
+    
     public function addIdentifier(Identifier $identifier){
         $this->identifier[] = $identifier;
     }
+    /* obligatorio solo: "registered", "preliminary", "final", "amended" */
     public function setStatus($status){
         $only = ["registered", "preliminary", "final", "amended"];
         $this->status = $status;
@@ -189,21 +192,44 @@ class Observation extends DomainResource{
     public function addPartOf(Resource $partOf){
         $this->partOf[] = $partOf->toReference();
     }
+    /* obligatorio 
+        \Fhir\Element\CodeableConcept
+            "coding": \Fhir\Element\Coding (array 1..*)
+                "code": 
+                "display":
+                "system": 
+            "text":
+    */
     public function addCategory(CodeableConcept $category){
         $this->category[] = $category;
     }
+    /* obligatorio 
+        \Fhir\Element\CodeableConcept
+            "coding": \Fhir\Element\Coding (array 1..*)
+                "code": 
+                "display":
+                "system": 
+            "text":
+    */
     public function setCode(CodeableConcept $code){
         $this->code = $code;
     }
+    /* obligatorio */
     public function setSubject(Resource $subject){
         $this->subject = $subject->toReference();
     }
     public function addFocus(Resource $focus){
         $this->focus[] = $focus->toReference();
     }
+    /* obligatorio */
     public function setEncounter(Resource $encounter){
         $this->encounter = $encounter->toReference();
     }
+    /* 
+                                      v es una letra T (constante)
+        obligatorio formato YYYY-MM-DDTHH:II:SS.000Z
+        ejemplo: 2022-05-25T09:40:00.000Z
+    */
     public function setEffectiveDateTime($effectiveDateTime){
         $this->effectiveDateTime = $effectiveDateTime;
     }
@@ -219,9 +245,24 @@ class Observation extends DomainResource{
     public function addPerformer(Resource $performer){
         $this->performer[] = $performer->toReference();
     }
+    /* Obligatorio (almenos un value, puede ser valueQuantity, valuestring, etc) 
+        \Fhir\Element\Quantity:
+        "value": 
+        "unit": 
+        "code": 
+        "system":
+    */
     public function setValueQuantity(Quantity $valueQuantity){
         $this->valueQuantity = $valueQuantity;
     }
+    /* Obligatorio (almenos un value, puede ser valueQuantity, valuestring, etc) 
+        \Fhir\Element\CodeableConcept
+            "coding": \Fhir\Element\Coding (array 1..*)
+                "code": 
+                "display":
+                "system": 
+            "text":
+    */
     public function setValueCodeableConcept(CodeableConcept $valueCodeableConcept){
         $this->valueCodeableConcept = $valueCodeableConcept;
     }

@@ -9,7 +9,9 @@ use App\Fhir\Element\Period;
 use App\Fhir\Element\Quantity;
 use App\Fhir\Element\Ratio;
 use App\Fhir\Element\Reference;
-
+/* 
+    Este recurso ya no se utiliza
+*/
 class MedicationAdministration extends DomainResource{
     public function __construct($json = null){
         $this->resourceType = "MedicationAdministration";
