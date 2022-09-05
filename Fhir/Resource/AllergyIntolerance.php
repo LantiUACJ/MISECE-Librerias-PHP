@@ -278,7 +278,7 @@ class AllergyIntolerance extends DomainResource{
             }
         }
         if (isset($this->criticality)){
-            $arrayData[] = $this->criticality;
+            $arrayData["criticality"] = $this->criticality;
         }
         if (isset($this->code)){
             $arrayData["code"] = $this->code->toArray();

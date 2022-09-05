@@ -8,10 +8,9 @@ use App\Fhir\Element\Dosage;
 use App\Fhir\Element\Identifier;
 use App\Fhir\Element\Period;
 use App\Fhir\Element\Quantity;
-use App\Fhir\Element\Ratio;
 use App\Fhir\Element\Reference;
 
-class MedicationAdministration extends DomainResource{
+class MedicationRequest extends DomainResource{
 
     public function __construct($json = null){
         $this->resourceType = "MedicationRequest";
@@ -308,118 +307,147 @@ class MedicationAdministration extends DomainResource{
     }
 
     function toArray(){
-        if(isset($this->identifier))
+        $arrayData = parent::toArray();
+        if(isset($this->identifier)){
+            $arrayData["identifier"] = [];
             foreach($this->identifier as $identifier)
-                $this->identifier[] = Identifier::Load($identifier);
+                $arrayData["identifier"][] = $identifier->toArray();
+        }
         if (isset($this->status))
-            $this->intent = $this->intent;
+            $arrayData["intent"] = $this->intent;
         if (isset($this->statusReason))
-            $this->statusReason = $this->statusReason;
+            $arrayData["statusReason"] = $this->statusReason;
         if (isset($this->intent))
-            $this->intent = $this->intent;
-        if (isset($this->category) && $this->category)
+            $arrayData["intent"] = $this->intent;
+        if (isset($this->category) && $this->category){
+            $arrayData["category"] = [];
             foreach ($this->category as $category)
-                $this->category[] = CodeableConcept::Load($category);
+                $arrayData["category"][] = $category->toArray();
+        }
         if (isset($this->priority))
-            $this->priority = $this->priority;
+            $arrayData["priority"] = $this->priority;
         if (isset($this->doNotPerform))
-            $this->doNotPerform = $this->doNotPerform;
+            $arrayData["doNotPerform"] = $this->doNotPerform;
         if (isset($this->reportedBoolean))
-            $this->reportedBoolean = $this->reportedBoolean;
+            $arrayData["reportedBoolean"] = $this->reportedBoolean;
         if (isset($this->reportedReference))
-            $this->reportedReference = Reference::Load($this->reportedReference);
+            $arrayData["reportedReference"] = $this->reportedReference->toArray();
         if (isset($this->medicationCodeableConcept))
-            $this->medicationCodeableConcept = CodeableConcept::Load($this->medicationCodeableConcept);
+            $arrayData["medicationCodeableConcept"] = $this->medicationCodeableConcept->toArray();
         if (isset($this->medicationReference))
-            $this->medicationReference = Reference::Load($this->medicationReference);
+            $arrayData["medicationReference"] = $this->medicationReference->toArray();
         if (isset($this->subject))
-            $this->subject = Reference::Load($this->subject);
+            $arrayData["subject"] = $this->subject->toArray();
         if (isset($this->encounter))
-            $this->encounter = Reference::Load($this->encounter);
+            $arrayData["encounter"] = $this->encounter->toArray();
         if (isset($this->supportingInformation))
-            $this->supportingInformation = Reference::Load($this->supportingInformation);
+            $arrayData["supportingInformation"] = $this->supportingInformation->toArray();
         if (isset($this->authoredOn))
-            $this->authoredO = $this->authoredOn;
+            $arrayData["authoredO"] = $this->authoredOn;
         if (isset($this->requester))
-            $this->requester = Reference::Load($this->requester);
+            $arrayData["requester"] = $this->requester->toArray();
         if (isset($this->performer))
-            $this->performer = Reference::Load($this->performer);
+            $arrayData["performer"] = $this->performer->toArray();
         if (isset($this->performerType))
-            $this->performerType = CodeableConcept::Load($this->performerType);
+            $arrayData["performerType"] = $this->performerType->toArray();
         if (isset($this->recorder))
-            $this->recorder = Reference::Load($this->recorder);
-        if (isset($this->reasonCode) && $this->reasonCode)
+            $arrayData["recorder"] = $this->recorder->toArray();
+        if (isset($this->reasonCode) && $this->reasonCode){
+            $arrayData["reasonCode"] = [];
             foreach ($this->reasonCode as $reasonCode)
-                $this->reasonCode[] = CodeableConcept::Load($reasonCode);
-        if (isset($this->reasonReference) && $this->reasonReference)
+                $arrayData["reasonCode"][] = $reasonCode->toArray();
+        }
+        if (isset($this->reasonReference) && $this->reasonReference){
+            $arrayData["reasonReference"] = [];
             foreach ($this->reasonReference as $reasonReference)
-                $this->reasonReference[] = Reference::Load($reasonReference);
-        if (isset($this->instantiatesCanonical) && $this->instantiatesCanonical)
+                $arrayData["reasonReference"][] = $reasonReference->toArray();
+        }
+        if (isset($this->instantiatesCanonical) && $this->instantiatesCanonical){
+            $arrayData["instantiatesCanonical"] = [];
             foreach ($this->instantiatesCanonical as $instantiatesCanonical)
                 $this->instantiatesCanonica[] = $instantiatesCanonical;
-        if (isset($this->instantiatesUri) && $this->instantiatesUri)
+        }
+        if (isset($this->instantiatesUri) && $this->instantiatesUri){
+            $arrayData["instantiatesUri"] = [];
             foreach ($this->instantiatesUri as $instantiatesUri)
                 $this->instantiatesUr[] = $instantiatesUri;
-        if (isset($this->basedOn) && $this->basedOn)
+        }
+        if (isset($this->basedOn) && $this->basedOn){
+            $arrayData["basedOn"] = [];
             foreach ($this->basedOn as $basedOn)
-                $this->basedOn[] = Reference::Load($basedOn);
+                $this->basedOn[] = $basedOn->toArray();
+        }
         if (isset($this->groupIdentifier))
-            $this->groupIdentifier = Identifier::Load($this->groupIdentifier);
+            $this->groupIdentifier = $this->groupIdentifier->toArray();
         if (isset($this->courseOfTherapyType))
-            $this->courseOfTherapyType = CodeableConcept::Load($this->courseOfTherapyType);
-        if (isset($this->insurance) && $this->insurance)
+            $this->courseOfTherapyType = $this->courseOfTherapyType->toArray();
+        if (isset($this->insurance) && $this->insurance){
+            $arrayData["insurance"] = [];
             foreach ($this->insurance as $insurance)
-                $this->insurance[] = Reference::Load($insurance);
-        if (isset($this->note) && $this->note)
+                $arrayData["insurance"][] = $insurance->toArray();
+        }
+        if (isset($this->note) && $this->note){
+            $arrayData["note"] = [];
             foreach ($this->note as $note)
-                $this->note[] = Annotation::Load($note);
-        if (isset($this->dosageInstruction) && $this->dosageInstruction)
+                $arrayData["note"][] = $note->toArray();
+        }
+        if (isset($this->dosageInstruction) && $this->dosageInstruction){
+            $arrayData["dosageInstruction"] = [];
             foreach ($this->dosageInstruction as $dosageInstruction)
-                $this->dosageInstruction[] = Dosage::Load($dosageInstruction);
+                $arrayData["dosageInstruction"][] = $dosageInstruction->toArray();
+        }
         if (isset($this->dispenseRequest) && $this->dispenseRequest){
-            $arrayData = [];
-            if (isset($this->dispenseRequest->initialFill) && $this->dispenseRequest->initialFill){
+            $dispenseRequest = [];
+            if (isset($this->dispenseRequest["initialFill"]) && $this->dispenseRequest["initialFill"]){
                 $initialFill = [];
-                if (isset($this->dispenseRequest->initialFill->quantity))
-                    $initialFill["quantity"] = Quantity::Load($this->dispenseRequest->initialFill->quantity);
-                if (isset($this->dispenseRequest->initialFill->duration))
-                    $initialFill["duration"] = Quantity::Load($this->dispenseRequest->initialFill->duration);
+                if (isset($this->dispenseRequest["initialFill"]["quantity"]))
+                    $initialFill["quantity"] = $this->dispenseRequest["initialFill"]["quantity"];
+                if (isset($this->dispenseRequest["initialFill"]["duration"]))
+                    $initialFill["duration"] = $this->dispenseRequest["initialFill"]["duration"];
                 if($initialFill)
-                    $this->dispenseRequest["initialFill"] = $initialFill;
+                    $dispenseRequest["initialFill"] = $initialFill;
             }
             if(isset($this->substitution)){
-                $this->dispenseRequest["substitution"] = [];
-                if (isset($this->substitution->dispenseInterval))
-                    $this->dispenseRequest["substitution"]["dispenseInterval"] = Quantity::Load($this->substitution->dispenseInterval);
-                if (isset($this->substitution->validityPeriod))
-                    $this->dispenseRequest["substitution"]["dispenseInterval"] = Period::Load($this->substitution->validityPeriod);
-                if (isset($this->substitution->numberOfRepeatsAllowed))
-                    $this->dispenseRequest["substitution"]["dispenseInterval"] = $this->substitution->numberOfRepeatsAllowed;
-                if (isset($this->substitution->quantity))
-                    $this->dispenseRequest["substitution"]["dispenseInterval"] = Quantity::Load($this->substitution->quantity);
-                if (isset($this->substitution->expectedSupplyDuration))
-                    $this->dispenseRequest["substitution"]["dispenseInterval"] = Quantity::Load($this->substitution->expectedSupplyDuration);
-                if (isset($this->dispenseRequest->performer))
-                    $this->dispenseRequest["substitution"]["dispenseInterval"] = Reference::Load($this->dispenseRequest->performer);
+                $substitution = [];
+                if (isset($this->dispenseRequest["substitution"]["dispenseInterval"]))
+                    $substitution["dispenseInterval"] = $this->dispenseRequest["substitution"]["dispenseInterval"]->toArray();
+                if (isset($this->dispenseRequest["substitution"]["validityPeriod"]))
+                    $substitution["dispenseInterval"] = $this->dispenseRequest["substitution"]["validityPeriod"]->toArray();
+                if (isset($this->dispenseRequest["substitution"]["numberOfRepeatsAllowed"]))
+                    $substitution["dispenseInterval"] = $this->dispenseRequest["substitution"]["numberOfRepeatsAllowed"];
+                if (isset($this->dispenseRequest["substitution"]["quantity"]))
+                    $substitution["dispenseInterval"] = $this->dispenseRequest["substitution"]["quantity"]->toArray();
+                if (isset($this->dispenseRequest["substitution"]["expectedSupplyDuration"]))
+                    $substitution["dispenseInterval"] = $this->dispenseRequest["substitution"]["expectedSupplyDuration"]->toArray();
+                if (isset($this->dispenseRequest["substitution"]["performer"]))
+                    $substitution["dispenseInterval"] = $this->dispenseRequest["substitution"]["performer"]->toArray();
+                if($substitution)
+                    $dispenseRequest["substitution"] = $substitution;
             }
         }
         if (isset($this->substitution)){
-            $arrayData = [];
-            if (isset($this->substitution->allowedBoolean))
-                $this->substitution["allowedBoolean"] = $this->substitution->allowedBoolean;
-            if (isset($this->substitution->allowedCodeableConcept))
-                $this->substitution["allowedCodeableConcept"] = CodeableConcept::Load($this->substitution->allowedCodeableConcept);
-            if (isset($this->substitution->reason))
-                $this->substitution["reason"] = CodeableConcept::Load($this->substitution->reason);
+            $substitution = [];
+            if (isset($this->substitution["allowedBoolean"]))
+                $substitution["allowedBoolean"] = $this->substitution["allowedBoolean"];
+            if (isset($this->substitution["allowedCodeableConcept"]))
+                $substitution["allowedCodeableConcept"] = $this->substitution["allowedCodeableConcept"]->toArray();
+            if (isset($this->substitution["reason"]))
+                $substitution["reason"] = $this->substitution["reason"]->toArray();
+            $arrayData["substitution"] = $substitution;
         }
         if (isset($this->priorPrescription))
-            $this->priorPrescription = Reference::Load($this->priorPrescription);
-        if (isset($this->detectedIssue) && $this->detectedIssue)
+            $arrayData["priorPrescription"] = $this->priorPrescription->toArray();
+        if (isset($this->detectedIssue) && $this->detectedIssue){
+            $arrayData["detectedIssue"] = [];
             foreach ($this->detectedIssue as $detectedIssue)
-                $this->detectedIssue[] = Reference::Load($detectedIssue);
-        if (isset($this->eventHistory) && $this->eventHistory)
+                $arrayData["detectedIssue"][] = $detectedIssue->toArray();
+        }
+        if (isset($this->eventHistory) && $this->eventHistory){
+            $arrayData["eventHistory"] = [];
             foreach ($this->eventHistory as $eventHistory)
-                $this->eventHistory[] = Reference::Load($eventHistory);
+                $arrayData["eventHistory"][] = $eventHistory->toArray();
+        }
+        return $arrayData;
     }
 
 }
