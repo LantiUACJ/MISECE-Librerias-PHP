@@ -33,7 +33,7 @@ class Observation extends DomainResource{
     private function loadData($json){
         if(isset($json->identifier))
             foreach($json->identifier as $identifier)
-                $this->identifier[] = $identifier->toArray();
+                $this->identifier[] = Identifier::Load($identifier);
         if(isset($json->status))
             $this->status = $json->status;
         if(isset($json->issued))
@@ -59,9 +59,9 @@ class Observation extends DomainResource{
         if(isset($json->effectiveDateTime))
             $this->effectiveDateTime = $json->effectiveDateTime;
         if(isset($json->effectivePeriod))
-            $this->effectivePeriod = $json->effectivePeriod->toArray();
+            $this->effectivePeriod = Period::Load($json->effectivePeriod);
         if(isset($json->effectiveTiming))
-            $this->effectiveTiming = $json->effectiveTiming->toArray();
+            $this->effectiveTiming = Timing::Load($json->effectiveTiming);
         if(isset($json->effectiveInstant))
             $this->effectiveInstant = $json->effectiveInstant;
         if(isset($json->performer))
