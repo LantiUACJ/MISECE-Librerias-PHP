@@ -61,7 +61,7 @@ class Resource{
         return json_encode($this->toArray());
     }
     public function toString(){
-        return "";
+        return $this->resourceType;
     }
     
     /* Funciones para clases heredadas */
