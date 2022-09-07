@@ -152,7 +152,11 @@ class Practitioner extends DomainResource{
         $this->communication = $communication;
     }
 
-
+    public function toString(){
+        if(isset($this->name) && $this->name && $this->name[0])
+            return "Practicante: " . $this->name[0]->toString();
+        return "Practicante";
+    }
 
     public function toArray(){
         $arrayData = parent::toArray();
