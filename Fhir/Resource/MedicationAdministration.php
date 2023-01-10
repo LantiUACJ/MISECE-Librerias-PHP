@@ -46,9 +46,9 @@ class MedicationAdministration extends DomainResource{
         if(isset($json->category))
             $this->category = CodeableConcept::Load($json->category);
         if(isset($json->medicationCodeableConcept))
-            $this->medicationCodeableConcept = $json->medicationCodeableConcept;
+            $this->medicationCodeableConcept = CodeableConcept::Load($json->medicationCodeableConcept);
         if(isset($json->medicationReference))
-            $this->medicationReference = CodeableConcept::Load($json->medicationReference);
+            $this->medicationReference = Reference::Load($json->medicationReference);
         if(isset($json->subject))
             $this->subject = Reference::Load($json->subject);
         if(isset($json->context))

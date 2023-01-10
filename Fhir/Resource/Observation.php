@@ -44,9 +44,9 @@ class Observation extends DomainResource{
         if(isset($json->partOf))
             foreach($json->partOf as $partOf)
                 $this->partOf[] = $partOf->toArray();
-        if(isset($json->partOf))
+        if(isset($json->category))
             foreach($json->category as $category)
-                $this->category[] = $category->toArray();
+                $this->category[] = CodeableConcept::Load($category);
         if(isset($json->code))
             $this->code = CodeableConcept::Load($json->code);
         if(isset($json->subject))

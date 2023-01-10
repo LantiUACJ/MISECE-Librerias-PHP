@@ -54,9 +54,9 @@ class Patient extends DomainResource{
             foreach($json->address as $address)
                 $this->address[] = Address::Load($address);
         if(isset($json->maritalStatus))
-            $this->maritalStatus = $json->maritalStatus->toArray();
+            $this->maritalStatus = CodeableConcept::Load($json->maritalStatus);
         if(isset($json->photo))
-            $this->photo = $json->photo->toArray();
+            $this->photo = Attachment::Load($json->photo);
         if(isset($json->contact)){
             $this->contact = [];
             foreach($json->contact as $contact){
@@ -82,7 +82,7 @@ class Patient extends DomainResource{
             foreach($json->communication as $communication){
                 $data = [];
                 if($communication->language)
-                    $data["language"] = $communication->language;
+                    $data["language"] = CodeableConcept::Load($communication->language);
                 if($communication->preferred)
                     $data["preferred"] = $communication->preferred;
                 $this->communication[] = $data;

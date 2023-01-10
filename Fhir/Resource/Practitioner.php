@@ -140,13 +140,18 @@ class Practitioner extends DomainResource{
                 "text": "Médico"
             }
     */
-    public function addQualification(Identifier $identifier, CodeableConcept $code, Period $period, Resource $issuer){
-        $this->qualification[] = [
-            "identifier" => $identifier,
-            "code" => $code,
-            "period" => $period,
-            "issuer" => $issuer->toReference()
+    public function addQualification(CodeableConcept $code, Identifier $identifier, Period $period = null, Resource $issuer = null){
+        $qualification = [
+            "code" => $code, 
+            "identifier" => $identifier
         ];
+        if($period){
+            $qualification["period"] = $period;
+        }
+        if($issuer){
+            $qualification["issuer"] = $issuer->toReference();
+        }
+        $this->qualification[] = $qualification;
     }
     public function setCommunication(CodeableConcept $communication){
         $this->communication = $communication;

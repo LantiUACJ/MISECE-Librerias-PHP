@@ -35,7 +35,7 @@ class MedicationRequest extends DomainResource{
             foreach($json->identifier as $identifier)
                 $this->identifier[] = Identifier::Load($identifier);
         if (isset($json->status))
-            $this->intent = $json->intent;
+            $this->status = $json->status;
         if (isset($json->statusReason))
             $this->statusReason = $json->statusReason;
         if (isset($json->intent))
@@ -314,7 +314,7 @@ class MedicationRequest extends DomainResource{
                 $arrayData["identifier"][] = $identifier->toArray();
         }
         if (isset($this->status))
-            $arrayData["intent"] = $this->intent;
+            $arrayData["status"] = $this->status;
         if (isset($this->statusReason))
             $arrayData["statusReason"] = $this->statusReason;
         if (isset($this->intent))
